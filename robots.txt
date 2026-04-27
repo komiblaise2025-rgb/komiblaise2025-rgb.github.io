@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://komiblaise2025-rgb.github.io/Komiblaise2025-rgb.io/sitemap.xml
+Sitemap: https://komiblaise2025-rgb.github.io/sitemap.xml
