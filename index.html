@@ -153,80 +153,40 @@ footer {
   color: #0056b3;          /* bleu plus foncé au survol */
 }
 </style>
-  <link rel="preconnect" href="https://cmp.inmobi.com" crossorigin>
-<link rel="dns-prefetch" href="https://cmp.inmobi.com">
+<link rel="preconnect" href="https://cmp.inmobi.com" crossorigin>
 
 <script type="text/javascript">
 (function() {
   var host = "www.themoneytizer.com";
   var url = 'https://cmp.inmobi.com/choice/6Fv0cGNfc_bw8/' + host + '/choice.js?tag_version=V3';
-  
-  // Fonction pour charger le script sans bloquer le rendu
+  var isLoaded = false;
+
   function loadCMP() {
+    if (isLoaded) return;
+    isLoaded = true;
     var element = document.createElement('script');
     var firstScript = document.getElementsByTagName('script')[0];
     element.async = true;
     element.type = 'text/javascript';
     element.src = url;
-    element.setAttribute('fetchpriority', 'low'); // Indique au navigateur que ce n'est pas urgent
     firstScript.parentNode.insertBefore(element, firstScript);
+    
+    // Nettoyage des écouteurs d'événements
+    window.removeEventListener('scroll', loadCMP);
+    window.removeEventListener('mousemove', loadCMP);
+    window.removeEventListener('touchstart', loadCMP);
   }
 
-  // OPTIMISATION : On attend que le navigateur soit inactif (idle) ou que la page soit chargée
-  if ('requestIdleCallback' in window) {
-    requestIdleCallback(function() {
-      loadCMP();
-    });
-  } else {
-    window.addEventListener('load', loadCMP);
-  }
+  // On attend une interaction utilisateur pour charger le script lourd
+  window.addEventListener('scroll', loadCMP, {passive: true});
+  window.addEventListener('mousemove', loadCMP, {passive: true});
+  window.addEventListener('touchstart', loadCMP, {passive: true});
 
-  // --- STUB TCF API (Nécessaire pour le fonctionnement immédiat des pubs) ---
-  function makeStub() {
-    var TCF_LOCATOR_NAME = '__tcfapiLocator';
-    var win = window;
-    var cmpFrame;
+  // Sécurité : si l'utilisateur ne bouge pas, on charge quand même après 4 secondes
+  setTimeout(loadCMP, 4000);
 
-    function addFrame() {
-      var doc = win.document;
-      if (!win.frames[TCF_LOCATOR_NAME]) {
-        if (doc.body) {
-          var iframe = doc.createElement('iframe');
-          iframe.style.cssText = 'display:none';
-          iframe.name = TCF_LOCATOR_NAME;
-          doc.body.appendChild(iframe);
-        } else { setTimeout(addFrame, 5); }
-      }
-    }
-
-    while (win) {
-      try { if (win.frames[TCF_LOCATOR_NAME]) { cmpFrame = win; break; } } catch (e) {}
-      if (win === window.top) break;
-      win = win.parent;
-    }
-    if (!cmpFrame) {
-      addFrame();
-      win.__tcfapi = function() {
-        var a = arguments;
-        if (!a.length) return [];
-        win.__tcfapi.a = win.__tcfapi.a || [];
-        win.__tcfapi.a.push(a);
-      };
-      win.addEventListener('message', function(event) {
-        var msgIsString = typeof event.data === 'string';
-        var json = {};
-        try { json = msgIsString ? JSON.parse(event.data) : event.data; } catch (e) {}
-        var payload = json.__tcfapiCall;
-        if (payload) {
-          window.__tcfapi(payload.command, payload.version, function(ret, success) {
-            var res = { __tcfapiReturn: { returnValue: ret, success: success, callId: payload.callId } };
-            event.source.postMessage(msgIsString ? JSON.stringify(res) : res, '*');
-          }, payload.parameter);
-        }
-      }, false);
-    }
-  }
-  makeStub();
+  // --- STUB OBLIGATOIRE (pour ne pas casser les pubs) ---
+  function makeStub(){var TCF_LOCATOR_NAME="__tcfapiLocator";var win=window;var cmpFrame;function addFrame(){var doc=win.document;if(!win.frames[TCF_LOCATOR_NAME]){if(doc.body){var iframe=doc.createElement("iframe");iframe.style.cssText="display:none";iframe.name=TCF_LOCATOR_NAME;doc.body.appendChild(iframe)}else{setTimeout(addFrame,5)}}}while(win){try{if(win.frames[TCF_LOCATOR_NAME]){cmpFrame=win;break}}catch(e){}if(win===window.top)break;win=win.parent}if(!cmpFrame){addFrame();win.__tcfapi=function(){var a=arguments;if(!a.length)return[];win.__tcfapi.a=win.__tcfapi.a||[];win.__tcfapi.a.push(a)};win.addEventListener("message",function(event){var msgIsString=typeof event.data==="string";var json={};try{json=msgIsString?JSON.parse(event.data):event.data}catch(e){}var payload=json.__tcfapiCall;if(payload){window.__tcfapi(payload.command,payload.version,function(ret,success){var res={__tcfapiReturn:{returnValue:ret,success:success,callId:payload.callId}};event.source.postMessage(msgIsString?JSON.stringify(res):res,"*")},payload.parameter)}},false)}}makeStub();
 })();
 </script>
 
