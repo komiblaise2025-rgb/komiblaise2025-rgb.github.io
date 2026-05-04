@@ -341,6 +341,34 @@ TikTok continues evolving rapidly, and creators who adapt to these new features 
   <a href="about.html">About</a>
   <a href="contact.html">Contact</a>
 </footer>
+<script>
+// <![CDATA[
+  window.addEventListener('load', function() {
+    var gaLoaded = false;
+    function loadGA() {
+      if (gaLoaded) return;
+      gaLoaded = true;
+      
+      // Chargement asynchrone du script lourd
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-1N3RNVHSCD";
+      document.head.appendChild(script);
 
+      // Initialisation de Google Analytics
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1N3RNVHSCD', { 'anonymize_ip': true }); // Optionnel : pour la confidentialité
+    }
+
+    // Déclencheurs : charge après 4 secondes d'inactivité OU au premier mouvement
+    var idleTimeout = setTimeout(loadGA, 4000);
+    ['scroll', 'mousemove', 'touchstart', 'click'].forEach(function(evt) {
+      window.addEventListener(evt, loadGA, {once: true, passive: true});
+    });
+  });
+// ]]>
+</script>
 </body>
 </html>
