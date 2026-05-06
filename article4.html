@@ -78,125 +78,13 @@ footer a{
   text-decoration:none;
 }
 
-ul li{
+ul li{type
   margin-bottom:12px;
 }
 </style>
-
-<script type="text/javascript">
-(function() {
-
-  var host = "www.themoneytizer.com";
-
-  var url = 'https://cmp.inmobi.com/choice/6Fv0cGNfc_bw8/' + host + '/choice.js?tag_version=V3';
-
-  function makeStub() {
-
-    var TCF_LOCATOR_NAME = '__tcfapiLocator';
-
-    var queue = [];
-
-    var win = window;
-
-    function addFrame() {
-
-      var doc = win.document;
-
-      if (!win.frames[TCF_LOCATOR_NAME]) {
-
-        if (doc.body) {
-
-          var iframe = doc.createElement('iframe');
-
-          iframe.style.cssText = 'display:none';
-
-          iframe.name = TCF_LOCATOR_NAME;
-
-          doc.body.appendChild(iframe);
-
-        } else {
-
-          setTimeout(addFrame, 5);
-
-        }
-
-      }
-
-    }
-
-    win.__tcfapi = function() {
-
-      var args = arguments;
-
-      if (!args.length) return queue;
-
-      if (args[0] === 'ping') {
-
-        if (typeof args[2] === 'function') {
-
-          args[2]({
-            gdprApplies: undefined,
-            cmpLoaded: false,
-            cmpStatus: 'stub'
-          });
-
-        }
-
-      } else {
-
-        queue.push(args);
-
-      }
-
-    };
-
-    addFrame();
-
-  }
-
-  makeStub();
-
-  var loadCMP = function() {
-
-    if (window.cmpLoaded) return;
-
-    window.cmpLoaded = true;
-
-    window.removeEventListener('scroll', loadCMP);
-
-    window.removeEventListener('mousemove', loadCMP);
-
-    window.removeEventListener('touchstart', loadCMP);
-
-    var element = document.createElement('script');
-
-    element.async = true;
-
-    element.type = 'text/javascript';
-
-    element.src = url;
-
-    var firstScript = document.getElementsByTagName('script')[0];
-
-    firstScript.parentNode.insertBefore(element, firstScript);
-
-  };
-
-  window.addEventListener('scroll', loadCMP, {passive:true});
-
-  window.addEventListener('mousemove', loadCMP, {passive:true});
-
-  window.addEventListener('touchstart', loadCMP, {passive:true});
-
-  setTimeout(loadCMP, 4000);
-
-})();
-</script>
-
 </head>
 
 <body>
-
 <header>
   <h2>Technologies et Innovations</h2>
 </header>
