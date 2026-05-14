@@ -7,6 +7,7 @@ I specialize in optimizing digital projects for maximum performance and visibili
 *   **Web Performance Audits:** Specialized in improving Google PageSpeed Insights and Core Web Vitals.
 *   **Performance Proof:** ⚡ <details>
   <summary>Click here to view my 100% PageSpeed Score</summary>
+  
   ![Performance PageSpeed](pagespeed-performance.jpg)
 </details>
 *   **Technical SEO:** Advanced configuration of robots.txt, sitemaps, and metadata for global visibility.
