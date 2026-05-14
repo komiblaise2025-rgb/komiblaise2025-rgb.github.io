@@ -1,4 +1,11 @@
+# General rules for all search engines
 User-agent: *
 Allow: /
 
-Sitemap: https://komiblaise2025-rgb.github.io/sitemap.xml
+# Block access to sensitive or temporary folders
+Disallow: /private/
+Disallow: /backup/
+Disallow: /temp/
+
+# Link to your sitemap to speed up indexing
+Sitemap:https://komiblaise2025-rgb.github.io/sitemap.xml
