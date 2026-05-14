@@ -5,7 +5,7 @@ Welcome to the official repository of **Technologies et Innovations**, a platfor
 ## 🛠 Services & Expertise
 I specialize in optimizing digital projects for maximum performance and visibility:
 *   **Web Performance Audits:** Specialized in improving Google PageSpeed Insights and Core Web Vitals.
-*   **Performance Proof:** ⚡ [Click here to view my 100% PageSpeed Score](https://komiblaise2025-rgb.github.io/pagespeed.performance)
+*   **Performance Proof:** ⚡ [Click here to view my 100% PageSpeed Score](https://komiblaise2025-rgb.github.io/PageSpeed-performance.jpg)
 *   **Technical SEO:** Advanced configuration of robots.txt, sitemaps, and metadata for global visibility.
 *   **Monetization Optimization:** Integration of high-performance advertising scripts like The Moneytizer and Adsterra.
 *   **Cybersecurity & Bug Bounty:** Focused on vulnerability research and XSS identification.
