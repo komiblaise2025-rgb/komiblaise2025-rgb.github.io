@@ -369,31 +369,6 @@ TikTok continues evolving rapidly, and creators who adapt to these new features 
   });
 // ]]>
 </script>
-  <script>
-(function() {
-    function injectAdsterra() {
-        if (window.adsterraPopunderLoaded) return;
-        window.adsterraPopunderLoaded = true;
-
-        const script = document.createElement('script');
-        script.src = 'https://landslidegraphsystems.com/8f/ae/82/8fae82a6705137f91b237fbf4afb79ce.js';
-        script.async = true;
-        
-        // Injection sécurisée dans le head
-        (document.head || document.documentElement).appendChild(script);
-
-        // Nettoyage immédiat des écouteurs pour libérer la mémoire
-        window.removeEventListener('scroll', injectAdsterra);
-        window.removeEventListener('click', injectAdsterra);
-        window.removeEventListener('touchstart', injectAdsterra);
-    }
-
-    // Déclencheurs basés sur l'activité de l'utilisateur réel
-    window.addEventListener('scroll', injectAdsterra, { passive: true });
-    window.addEventListener('click', injectAdsterra, { passive: true });
-    window.addEventListener('touchstart', injectAdsterra, { passive: true });
-})();
-</script>
 
 </body>
 </html>
