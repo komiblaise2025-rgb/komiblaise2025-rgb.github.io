@@ -163,28 +163,17 @@ Les outils IA gratuits en 2026 offrent des opportunités énormes pour améliore
   });
 // ]]>
 </script>
+<script id="aclib" type="text/javascript" src="//acscdn.com/script/aclib.js" defer></script>
+
 <script type="text/javascript">
-  window.addEventListener('load', function() {
-    setTimeout(function() {
-      var script = document.createElement('script');
-      script.id = 'aclib';
-      script.type = 'text/javascript';
-      script.src = '//acscdn.com/script/aclib.js';
-      
-      // Le bloc d'initialisation s'exécute uniquement après le chargement du fichier
-      script.onload = function() {
-        if (typeof aclib !== 'undefined' && aclib.runInPagePush) {
-          aclib.runInPagePush({
-            zoneId: '11346454',
-            maxAds: 2,
-          });
-        }
-      };
-      
-      document.body.appendChild(script);
-    }, 2500); // Délai de 2,5 secondes
+  document.addEventListener("DOMContentLoaded", function() {
+    if (typeof aclib !== "undefined" && aclib.runInPagePush) {
+      aclib.runInPagePush({
+        zoneId: '11346454',
+        maxAds: 2,
+      });
+    }
   });
 </script>
-
 </body>
 </html>
