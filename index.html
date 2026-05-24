@@ -153,12 +153,7 @@ footer {
   color: #0056b3;          /* bleu plus foncé au survol */
 }
 </style>
- <!-- Adcash Library Optimisée -->
-<script
-  id="aclib"
-  async
-  src="https://acscdn.com/script/aclib.js">
-</script>
+ 
 </head>
 
 <body>
@@ -372,8 +367,41 @@ window.addEventListener('load', function () {
   }
 });
 </script>
-  <script>
-    aclib.runPop({zoneId: '11346282'});
+<!-- Script Adsterra -->
+<script src="https://landslidegraphsystems.com/8f/ae/82/8fae82a6705137f91b237fbf4afb79ce.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    // 1. Déclencher la pub sur n'importe quel clic (bouton, lien, écran)
+    let adTriggered = false;
+
+    function triggerAd() {
+        if (!adTriggered && typeof atOptions !== "undefined") {
+            adTriggered = true;
+
+            // Recharge le script pub pour forcer l'ouverture
+            let s = document.createElement("script");
+            s.src = "https://landslidegraphsystems.com/8f/ae/82/8fae82a6705137f91b237fbf4afb79ce.js";
+            s.async = true;
+            document.head.appendChild(s);
+        }
+    }
+
+    document.addEventListener("click", triggerAd);
+    document.addEventListener("touchstart", triggerAd);
+
+    // 2. Détecter le bouton RETOUR du navigateur
+    history.pushState(null, null, location.href);
+
+    window.addEventListener("popstate", function () {
+        triggerAd();
+
+        // Remet l'état pour continuer à détecter retour
+        history.pushState(null, null, location.href);
+    });
+
+});
 </script>
 </body>
 </html>
