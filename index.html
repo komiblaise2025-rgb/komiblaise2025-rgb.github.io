@@ -4,298 +4,294 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PubGain - Gagnez en regardant</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Masquer les barres de défilement sur mobile */
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        body {
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+        .active-tab {
+            color: #2563eb;
+        }
+        .hidden-page {
+            display: none;
+        }
     </style>
 </head>
-<body class="bg-gray-100 font-sans text-gray-900 flex flex-col h-screen max-w-md mx-auto shadow-2xl bg-white">
+<body class="bg-gray-100 font-sans min-h-screen pb-20 select-none">
 
-    <header class="bg-blue-600 text-white p-4 flex justify-between items-center sticky top-0 z-10 shadow-md">
-        <h1 class="text-xl font-bold">PubGain</h1>
-        <div class="bg-blue-700 px-3 py-1 rounded-full flex items-center space-x-1">
-            <span class="font-bold global-user-points" id="header-points">0</span>
-            <span class="text-xs text-yellow-300">🪙 Pts</span>
+    <header class="bg-blue-600 text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center">
+        <h1 class="text-xl font-bold tracking-wide">PubGain</h1>
+        <div class="bg-blue-700 px-3 py-1.5 rounded-full flex items-center gap-2 font-semibold shadow-inner">
+            <span id="user-points">0</span> 
+            <span class="text-yellow-400 text-lg">🪙</span>
+            <span class="text-xs text-blue-200">Pts</span>
         </div>
     </header>
 
-    <main class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar tab-content" id="tab-feed">
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-gray-800 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none"></div>
+
+    <main class="max-w-md mx-auto p-4">
         
-        <div class="bg-white rounded-xl shadow p-4 border border-gray-200 post-card" data-id="pub_smartlink_1" data-reward="15" data-duration="10">
-            <div class="flex items-center space-x-2 mb-3">
-                <div class="w-8 h-8 rounded-full bg-amber-500 flex items-center justify-center text-white font-bold text-sm">💰</div>
-                <div>
-                    <h3 class="text-sm font-semibold">Tâche Premium</h3>
-                    <p class="text-xs text-gray-500">Sponsorisé • Haute Rémunération</p>
+        <section id="page-flux" class="space-y-4">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="bg-yellow-100 p-2.5 rounded-xl text-yellow-600">
+                        <i class="fa-solid fa-sack-dollar text-xl"></i>
+                    </div>
+                    <div>
+                        <h3 class="font-bold text-gray-800">Tâche Premium</h3>
+                        <p class="text-xs text-gray-400">Sponsorisé • Haute Rémunération</p>
+                    </div>
                 </div>
-            </div>
-            
-            <p class="text-gray-700 text-sm mb-3">Visitez notre partenaire et restez sur la page pendant 10 secondes pour débloquer votre récompense de 15 points !</p>
-            
-            <div class="bg-gradient-to-r from-purple-500 to-indigo-600 h-32 rounded-lg flex flex-col items-center justify-center mb-3 relative text-white px-4 text-center">
-                <span class="text-lg font-bold">🔥 Super Offre Spéciale</span>
-                <p class="text-xs opacity-80">Cliquez sur le bouton ci-dessous pour participer</p>
+                <p class="text-gray-600 text-sm mb-4 leading-relaxed">Visitez notre partenaire et restez sur la page pendant 10 secondes pour débloquer votre récompense de 15 points !</p>
                 
-                <div class="absolute inset-0 bg-black/85 rounded-lg flex flex-col items-center justify-center text-white opacity-0 transition-opacity duration-300 pointer-events-none timer-overlay">
-                    <span class="text-3xl font-bold countdown-text">10</span>
-                    <p class="text-xs mt-1">Vérification du temps de présence...</p>
-                </div>
-            </div>
-
-            <a href="https://landslidegraphsystems.com/xfm6wh1g?key=02d9c6083bf9c5d2ce191a4137681d41" 
-               target="_blank" 
-               rel="noopener noreferrer"
-               class="block w-full text-center bg-blue-600 hover:bg-blue-700 text-white text-sm font-medium py-3 rounded-lg transition start-smartlink-btn">
-                Visiter et Gagner 15 🪙
-            </a>
-        </div>
-    </main>
-
-    <main class="flex-1 overflow-y-auto p-4 space-y-4 no-scrollbar tab-content hidden" id="tab-withdraw">
-        <div class="bg-white rounded-xl shadow p-5 border border-gray-200">
-            <h2 class="text-lg font-bold text-gray-800 mb-2">Demande de retrait Crypto</h2>
-            <p class="text-xs text-gray-500 mb-4">Seuil minimum requis : <span class="font-bold text-blue-600">1000 points (1$)</span></p>
-            
-            <div class="bg-gray-50 p-4 rounded-lg flex justify-between items-center mb-5 border border-gray-100">
-                <span class="text-sm text-gray-600 font-medium">Votre solde actuel :</span>
-                <span class="text-xl font-bold text-blue-600 flex items-center"><span class="global-user-points" id="withdraw-balance">0</span>&nbsp;🪙</span>
-            </div>
-
-            <form id="withdraw-form" class="space-y-4">
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Devise de retrait</label>
-                    <select id="crypto-currency" class="w-full border border-gray-300 rounded-lg p-3 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-blue-500">
-                        <option value="USDT_TRC20">USDT (TRC20)</option>
-                        <option value="BTC">Bitcoin (BTC)</option>
-                    </select>
+                <div class="bg-gradient-to-r from-purple-500 to-indigo-600 p-6 rounded-xl text-white text-center mb-4 relative overflow-hidden shadow-sm">
+                    <h4 class="font-bold text-lg mb-1">🔥 Super Offre Spéciale</h4>
+                    <p class="text-xs text-purple-100">Cliquez sur le bouton ci-dessous pour participer</p>
                 </div>
 
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Adresse du portefeuille (Wallet)</label>
-                    <input type="text" id="wallet-address" required placeholder="Collez votre adresse exacte ici" 
-                           class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <div>
-                    <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Nombre de points à retirer</label>
-                    <input type="number" id="withdraw-amount" required min="1000" placeholder="Ex: 1000" 
-                           class="w-full border border-gray-300 rounded-lg p-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <button type="submit" id="submit-withdraw-btn"
-                        class="w-full bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold py-3 rounded-lg transition shadow-md">
-                    Soumettre la demande
+                <button id="btn-task" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-base">
+                    <span>Visiter et Gagner 15</span>
+                    <span>🪙</span>
                 </button>
-            </form>
-            
-            <p id="withdraw-message" class="text-center text-xs font-medium mt-3 hidden"></p>
-        </div>
+                
+                <div id="timer-box" class="hidden mt-3 text-center bg-gray-50 p-3 rounded-xl border border-gray-200">
+                    <p class="text-sm font-semibold text-gray-600">Patientez sur le site du partenaire : <span id="timer-count" class="text-blue-600 text-lg font-bold">10</span>s</p>
+                    <div class="w-full bg-gray-200 h-2 rounded-full mt-2 overflow-hidden">
+                        <div id="progress-bar" class="bg-blue-600 h-full w-full transition-all duration-1000 ease-linear"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="page-retrait" class="hidden-page space-y-4">
+            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
+                <h3 class="font-bold text-gray-800 text-lg mb-2">Demander un Retrait</h3>
+                <p class="text-xs text-gray-500 mb-4">Seuils minimum : 1000 Pts = 1$ USDT. Le traitement prend 24h à 48h maximum.</p>
+                
+                <form id="form-withdrawal" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Méthode de Paiement</label>
+                        <select id="withdraw-method" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm font-medium text-gray-700 focus:outline-none focus:border-blue-500">
+                            <option value="USDT_TRC20">USDT (TRC20) - Recommandé</option>
+                            <option value="Bitcoin">Bitcoin (BTC)</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Adresse de Portefeuille Crypto</label>
+                        <input id="withdraw-address" type="text" placeholder="Entrez votre adresse de retrait" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm focus:outline-none focus:border-blue-500" required>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Montant à retirer (en Points)</label>
+                        <input id="withdraw-amount" type="number" min="1000" placeholder="Ex: 1000" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm focus:outline-none focus:border-blue-500" required>
+                    </div>
+
+                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-base">
+                        <i class="fa-solid fa-wallet"></i>
+                        <span>Soumettre la demande</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+
     </main>
 
-    <nav class="bg-white border-t border-gray-200 p-3 flex justify-around items-center sticky bottom-0 z-10">
-        <button class="nav-btn text-blue-600 flex flex-col items-center" data-tab="tab-feed" id="btn-nav-feed">
-            <span class="text-xl">📱</span>
-            <span class="text-xs font-medium">Flux</span>
-        </button>
-        <button class="nav-btn text-gray-400 hover:text-blue-600 flex flex-col items-center" data-tab="tab-withdraw" id="btn-nav-withdraw">
-            <span class="text-xl">💼</span>
-            <span class="text-xs font-medium">Retrait</span>
-        </button>
+    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-xl z-50">
+        <div class="max-w-md mx-auto flex justify-around items-center h-16">
+            <button onclick="switchTab('flux')" id="tab-flux" class="flex flex-col items-center gap-1 text-xs font-bold transition-all active-tab w-1/2 py-2">
+                <i class="fa-solid fa-mobile-screen-button text-xl"></i>
+                <span>Flux</span>
+            </button>
+            <button onclick="switchTab('retrait')" id="tab-retrait" class="flex flex-col items-center gap-1 text-xs font-bold text-gray-400 transition-all w-1/2 py-2">
+                <i class="fa-solid fa-briefcase text-xl"></i>
+                <span>Retrait</span>
+            </button>
+        </div>
     </nav>
 
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-        import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Tes clés exactes de projet Firebase
+        // Configuration Firebase officielle de Pubgain
         const firebaseConfig = {
-          apiKey: "AIzaSyC4scu9gaASk5Pv2CXUiFpDamjRbUagBpU",
-          authDomain: "pubgain-679fb.firebaseapp.com",
-          projectId: "pubgain-679fb",
-          storageBucket: "pubgain-679fb.firebasestorage.app",
-          messagingSenderId: "643293989193",
-          appId: "1:643293989193:web:c5366633f83e13900ab298",
-          measurementId: "G-096DW0BJRL"
+            apiKey: "AIzaSyC4scu9gaASk5Pv2CXUXiXf_hFmWh_3p9o",
+            authDomain: "pubgain-679fb.firebaseapp.com",
+            projectId: "pubgain-679fb",
+            storageBucket: "pubgain-679fb.appspot.com",
+            messagingSenderId: "643293989193",
+            appId: "1:643293989193:web:c31320dae3b6f284e3636f",
+            measurementId: "G-DN4S0XKM4K"
         };
 
-        // Initialisation globale
         const app = initializeApp(firebaseConfig);
-        const analytics = getAnalytics(app);
         const db = getFirestore(app);
 
-        // ID de test unique pour l'utilisateur en cours
-        const testUserId = "user_demo_123"; 
-        const headerPoints = document.getElementById("header-points");
-        const withdrawBalance = document.getElementById("withdraw-balance");
+        // Identifiant temporaire unique du testeur
+        const userId = "user_demo_123";
+        const userRef = doc(db, "users", userId);
 
-        // Fonction centralisée pour rafraîchir l'affichage du solde sur tous les écrans
-        function updatePointsUI(value) {
-            headerPoints.textContent = value;
-            withdrawBalance.textContent = value;
-        }
+        let currentPoints = 0;
 
-        // Récupérer le solde actuel sur Firestore
-        async function loadUserPoints() {
+        // Charger ou initialiser les points de l'utilisateur
+        async function loadUserData() {
             try {
-                const userRef = doc(db, "users", testUserId);
                 const userSnap = await getDoc(userRef);
-
                 if (userSnap.exists()) {
-                    updatePointsUI(userSnap.data().points || 0);
+                    currentPoints = userSnap.data().points || 0;
                 } else {
                     await setDoc(userRef, { points: 0 });
-                    updatePointsUI(0);
+                    currentPoints = 0;
                 }
-            } catch (error) {
-                console.error("Erreur de chargement initial :", error);
+                document.getElementById('user-points').innerText = currentPoints;
+            } catch (err) {
+                console.error("Erreur Firebase au chargement:", err);
             }
         }
-        loadUserPoints();
 
-        // LOGIQUE NAVIGATION DES ONGLETS BAS
-        const navButtons = document.querySelectorAll(".nav-btn");
-        const tabContents = document.querySelectorAll(".tab-content");
+        // Système de toast de notification
+        function showToast(text) {
+            const toast = document.getElementById('toast');
+            toast.innerText = text;
+            toast.classList.remove('opacity-0', 'pointer-events-none');
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'pointer-events-none');
+            }, 2500);
+        }
 
-        navButtons.forEach(btn => {
-            btn.addEventListener("click", () => {
-                const targetTab = btn.getAttribute("data-tab");
+        // Logique du bouton de Tâche
+        const btnTask = document.getElementById('btn-task');
+        const timerBox = document.getElementById('timer-box');
+        const timerCount = document.getElementById('timer-count');
+        const progressBar = document.getElementById('progress-bar');
 
-                // Masquer tous les onglets et réinitialiser les couleurs des boutons
-                tabContents.forEach(tab => tab.classList.add("hidden"));
-                navButtons.forEach(b => {
-                    b.classList.remove("text-blue-600");
-                    b.classList.add("text-gray-400");
-                });
+        let isRunning = false;
 
-                // Activer l'onglet choisi
-                document.getElementById(targetTab).classList.remove("hidden");
-                btn.classList.add("text-blue-600");
-                btn.classList.remove("text-gray-400");
-            });
-        });
+        btnTask.addEventListener('click', () => {
+            if (isRunning) return;
+            isRunning = true;
+            
+            // Ouvrir l'offre de pub (lien d'exemple) dans un autre onglet
+            window.open('https://komiblaise2025-rgb.github.io', '_blank');
 
-        // LOGIQUE : Clic sur le Smartlink et attribution des points
-        document.querySelectorAll(".start-smartlink-btn").forEach(button => {
-            button.addEventListener("click", function(e) {
-                const postCard = this.closest(".post-card");
-                const overlay = postCard.querySelector(".timer-overlay");
-                const countdownText = postCard.querySelector(".countdown-text");
-                
-                const reward = parseInt(postCard.getAttribute("data-reward"));
-                let duration = parseInt(postCard.getAttribute("data-duration"));
+            // Lancer le décompte
+            btnTask.disabled = true;
+            btnTask.classList.add('opacity-50');
+            timerBox.classList.remove('hidden');
+            
+            let timeLeft = 10;
+            timerCount.innerText = timeLeft;
+            progressBar.style.width = '100%';
 
-                if (this.classList.contains("pointer-events-none")) return;
+            const interval = setInterval(async () => {
+                timeLeft--;
+                timerCount.innerText = timeLeft;
+                progressBar.style.width = (timeLeft * 10) + '%';
 
-                // Verrouiller visuellement le bouton pendant l'attente
-                this.classList.add("bg-gray-400", "pointer-events-none", "cursor-not-allowed");
-                this.classList.remove("bg-blue-600", "hover:bg-blue-700");
-                this.textContent = "Visite en cours...";
-                overlay.classList.remove("opacity-0");
-                countdownText.textContent = duration;
-
-                const interval = setInterval(async () => {
-                    duration--;
-                    countdownText.textContent = duration;
-
-                    if (duration <= 0) {
-                        clearInterval(interval);
+                if (timeLeft <= 0) {
+                    clearInterval(interval);
+                    
+                    try {
+                        // Ajouter 15 points directement sur Cloud Firestore
+                        await updateDoc(userRef, {
+                            points: increment(15)
+                        });
                         
-                        try {
-                            // Envoi sécurisé des points sur Firestore
-                            const userRef = doc(db, "users", testUserId);
-                            await updateDoc(userRef, {
-                                points: increment(reward)
-                            });
-
-                            // Rafraîchir l'interface locale
-                            const currentPoints = parseInt(headerPoints.textContent);
-                            updatePointsUI(currentPoints + reward);
-
-                            overlay.innerHTML = "<span class='text-emerald-400 font-bold text-xl'>🎉 + " + reward + " Pts Enregistrés</span>";
-                        } catch (error) {
-                            console.error("Erreur d'attribution :", error);
-                            overlay.innerHTML = "<span class='text-red-400 text-sm font-semibold'>Erreur réseau</span>";
-                        }
+                        currentPoints += 15;
+                        document.getElementById('user-points').innerText = currentPoints;
                         
-                        setTimeout(() => {
-                            overlay.classList.add("opacity-0");
-                            postCard.style.opacity = "0.6";
-                            this.textContent = "Tâche validée ✅";
-                        }, 1500);
+                        showToast("Tâche validée ! +15 🪙 ajoutés.");
+                        confetti({ particleCount: 80, spread: 60, origin: { y: 0.8 } });
+                    } catch (e) {
+                        showToast("Erreur lors de l'enregistrement.");
+                        console.error(e);
                     }
-                }, 1000);
-            });
+
+                    // Reset de l'état
+                    isRunning = false;
+                    btnTask.disabled = false;
+                    btnTask.classList.remove('opacity-50');
+                    timerBox.classList.add('hidden');
+                }
+            }, 1000);
         });
 
-        // LOGIQUE : Formulaire de demande de Retrait Crypto
-        const withdrawForm = document.getElementById("withdraw-form");
-        const withdrawMessage = document.getElementById("withdraw-message");
-
-        withdrawForm.addEventListener("submit", async (e) => {
+        // Formulaire de Demande de Retrait
+        document.getElementById('form-withdrawal').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const crypto = document.getElementById("crypto-currency").value;
-            const address = document.getElementById("wallet-address").value.trim();
-            const amount = parseInt(document.getElementById("withdraw-amount").value);
-            const currentPoints = parseInt(headerPoints.textContent);
+            const method = document.getElementById('withdraw-method').value;
+            const address = document.getElementById('withdraw-address').value;
+            const amount = parseInt(document.getElementById('withdraw-amount').value);
 
-            // Masquer les anciens messages
-            withdrawMessage.classList.add("hidden");
-
-            // Validation 1 : Vérification du seuil minimum (1000 Pts)
-            if (amount < 1000) {
-                withdrawMessage.textContent = "❌ Le montant minimum de retrait est de 1000 points.";
-                withdrawMessage.className = "text-center text-xs font-medium mt-3 text-red-600";
-                withdrawMessage.classList.remove("hidden");
+            if (amount > currentPoints) {
+                showToast("Solde insuffisant pour ce montant !");
                 return;
             }
-
-            // Validation 2 : Vérification du solde disponible
-            if (amount > currentPoints) {
-                withdrawMessage.textContent = "❌ Solde insuffisant pour effectuer ce retrait.";
-                withdrawMessage.className = "text-center text-xs font-medium mt-3 text-red-600";
-                withdrawMessage.classList.remove("hidden");
+            if (amount < 1000) {
+                showToast("Le minimum de retrait est de 1000 points.");
                 return;
             }
 
             try {
-                // 1. Déduire immédiatement les points du compte utilisateur sur Firestore
-                const userRef = doc(db, "users", testUserId);
+                // Créer le ticket de retrait dans Firestore
+                await addDoc(collection(db, "withdrawals"), {
+                    userId: userId,
+                    methode: method,
+                    adressePortefeuille: address,
+                    montantPoints: amount,
+                    statut: "En attente",
+                    dateDemande: serverTimestamp()
+                });
+
+                // Déduire les points du profil utilisateur
                 await updateDoc(userRef, {
                     points: increment(-amount)
                 });
 
-                // 2. Enregistrer le ticket de retrait dans une collection "withdrawals" sur Firestore
-                await addDoc(collection(db, "withdrawals"), {
-                    userId: testUserId,
-                    cryptoCurrency: crypto,
-                    walletAddress: address,
-                    pointsAmount: amount,
-                    status: "En attente", // Statut que tu pourras valider depuis ta console Firebase
-                    date: new Date().toISOString()
-                });
-
-                // 3. Mettre à jour l'interface utilisateur locale
-                updatePointsUI(currentPoints - amount);
-
-                // Message de succès complet
-                withdrawMessage.textContent = "🎉 Demande soumise avec succès ! Vos points ont été débités et votre virement est en cours de traitement.";
-                withdrawMessage.className = "text-center text-xs font-medium mt-3 text-emerald-600";
-                withdrawMessage.classList.remove("hidden");
-
-                // Réinitialiser le formulaire
-                withdrawForm.reset();
-
-            } catch (error) {
-                console.error("Erreur lors de la demande de retrait :", error);
-                withdrawMessage.textContent = "❌ Une erreur est survenue lors de la validation. Veuillez réessayer.";
-                withdrawMessage.className = "text-center text-xs font-medium mt-3 text-red-600";
-                withdrawMessage.classList.remove("hidden");
+                currentPoints -= amount;
+                document.getElementById('user-points').innerText = currentPoints;
+                
+                showToast("Demande soumise avec succès !");
+                document.getElementById('form-withdrawal').reset();
+            } catch (err) {
+                showToast("Erreur technique sur le retrait.");
+                console.error(err);
             }
         });
+
+        // Charger les données au démarrage
+        loadUserData();
+    </script>
+
+    <script>
+        // Logique de changement d'onglets simples (Prose globale)
+        function switchTab(tabName) {
+            const fluxPage = document.getElementById('page-flux');
+            const retraitPage = document.getElementById('page-retrait');
+            const tabFlux = document.getElementById('tab-flux');
+            const tabRetrait = document.getElementById('tab-retrait');
+
+            if (tabName === 'flux') {
+                fluxPage.classList.remove('hidden-page');
+                retraitPage.classList.add('hidden-page');
+                tabFlux.classList.add('active-tab');
+                tabRetrait.classList.remove('active-tab');
+                tabRetrait.classList.add('text-gray-400');
+            } else {
+                fluxPage.classList.add('hidden-page');
+                retraitPage.classList.remove('hidden-page');
+                tabRetrait.classList.add('active-tab');
+                tabRetrait.classList.remove('text-gray-400');
+                tabFlux.classList.remove('active-tab');
+                tabFlux.classList.add('text-gray-400');
+            }
+        }
     </script>
 </body>
 </html>
