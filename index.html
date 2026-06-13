@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PubGain - Gagnez en regardant</title>
+    <title>PubGain - Level & VIP Edition</title>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -20,10 +20,14 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 font-sans min-h-screen pb-20 select-none">
+<body class="bg-gray-100 font-sans min-h-screen pb-24 select-none">
 
+    <!-- TOP HEADER BAR -->
     <header class="bg-blue-600 text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center">
-        <h1 class="text-xl font-bold tracking-wide">PubGain</h1>
+        <div class="flex flex-col">
+            <h1 class="text-xl font-bold tracking-wide">PubGain</h1>
+            <span id="user-vip" class="text-[10px] bg-yellow-500 text-gray-900 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider w-max mt-0.5">VIP Bronze</span>
+        </div>
         <div class="bg-blue-700 px-3 py-1.5 rounded-full flex items-center gap-2 font-semibold shadow-inner">
             <span id="user-points">0</span> 
             <span class="text-yellow-400 text-lg">🪙</span>
@@ -31,69 +35,110 @@
         </div>
     </header>
 
-    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-gray-800 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none"></div>
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-gray-800 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none text-center min-w-[250px]"></div>
 
-    <main class="max-w-md mx-auto p-4">
+    <main class="max-w-md mx-auto p-4 space-y-4">
         
+        <!-- USER LEVEL DASHBOARD CARD -->
+        <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100 space-y-3">
+            <div class="flex justify-between items-center">
+                <span class="text-sm font-bold text-gray-700 flex items-center gap-1.5">
+                    <i class="fa-solid fa-star text-yellow-500"></i> Level <span id="txt-level">1</span>/15
+                </span>
+                <span class="text-xs font-semibold text-gray-400"><span id="txt-xp">0</span> / <span id="txt-next-xp">100</span> XP</span>
+            </div>
+            <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                <div id="xp-bar" class="bg-gradient-to-r from-yellow-400 to-orange-500 h-full w-[0%] transition-all duration-500"></div>
+            </div>
+            <p class="text-[11px] text-gray-400 text-center italic">Each completed task grants +10 XP. Higher levels increase your VIP rank & gains!</p>
+        </div>
+
+        <!-- PAGE 1: FLOW (TASKS) -->
         <section id="page-flux" class="space-y-4">
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                <div class="flex items-center gap-3 mb-3">
-                    <div class="bg-yellow-100 p-2.5 rounded-xl text-yellow-600">
-                        <i class="fa-solid fa-sack-dollar text-xl"></i>
+                <div class="flex items-center justify-between mb-3">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-blue-100 p-2.5 rounded-xl text-blue-600">
+                            <i class="fa-solid fa-bolt text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-800">Premium Video Task</h3>
+                            <p class="text-xs text-gray-400">Sponsored • Realtime Reward</p>
+                        </div>
                     </div>
-                    <div>
-                        <h3 class="font-bold text-gray-800">Tâche Premium</h3>
-                        <p class="text-xs text-gray-400">Sponsorisé • Haute Rémunération</p>
-                    </div>
+                    <span id="reward-badge" class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-lg">+15 Pts</span>
                 </div>
-                <p class="text-gray-600 text-sm mb-4 leading-relaxed">Visitez notre partenaire et restez sur la page pendant 10 secondes pour débloquer votre récompense de 15 points !</p>
                 
-                <div class="bg-gradient-to-r from-purple-500 to-indigo-600 p-6 rounded-xl text-white text-center mb-4 relative overflow-hidden shadow-sm">
-                    <h4 class="font-bold text-lg mb-1">🔥 Super Offre Spéciale</h4>
-                    <p class="text-xs text-purple-100">Cliquez sur le bouton ci-dessous pour participer</p>
-                </div>
-
+                <p class="text-gray-600 text-sm mb-4 leading-relaxed">Click the button below to visit our sponsor's link. Stay active on their webpage for 10 seconds to claim your points and XP.</p>
+                
                 <button id="btn-task" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-base">
-                    <span>Visiter et Gagner 15</span>
+                    <span>Visit and Win</span>
                     <span>🪙</span>
                 </button>
                 
                 <div id="timer-box" class="hidden mt-3 text-center bg-gray-50 p-3 rounded-xl border border-gray-200">
-                    <p class="text-sm font-semibold text-gray-600">Patientez sur le site publicitaire : <span id="timer-count" class="text-blue-600 text-lg font-bold">10</span>s</p>
+                    <p class="text-sm font-semibold text-gray-600">Watch the sponsor site: <span id="timer-count" class="text-blue-600 text-lg font-bold">10</span>s</p>
                     <div class="w-full bg-gray-200 h-2 rounded-full mt-2 overflow-hidden">
                         <div id="progress-bar" class="bg-blue-600 h-full w-full transition-all duration-1000 ease-linear"></div>
                     </div>
                 </div>
             </div>
+
+            <!-- VIP PERKS INFO BLOCK -->
+            <div class="bg-gradient-to-br from-gray-900 to-slate-800 p-5 rounded-2xl text-white shadow-md space-y-3">
+                <h4 class="font-bold text-sm tracking-wide text-yellow-400 uppercase flex items-center gap-1.5">
+                    <i class="fa-solid fa-crown"></i> VIP Status & Bonuses List
+                </h4>
+                <div class="grid grid-cols-2 gap-2 text-xs">
+                    <div class="bg-white/5 p-2 rounded-lg border border-white/10">
+                        <p class="font-bold text-amber-500">🥉 Bronze (Lv. 1-3)</p>
+                        <p class="text-[10px] text-gray-400">Base Earnings (15 Pts)</p>
+                    </div>
+                    <div class="bg-white/5 p-2 rounded-lg border border-white/10">
+                        <p class="font-bold text-slate-300">🥈 Silver (Lv. 4-7)</p>
+                        <p class="text-[10px] text-green-400">+10% Points Bonus</p>
+                    </div>
+                    <div class="bg-white/5 p-2 rounded-lg border border-white/10">
+                        <p class="font-bold text-yellow-400">🥇 Gold (Lv. 8-11)</p>
+                        <p class="text-[10px] text-green-400">+25% Points Bonus</p>
+                    </div>
+                    <div class="bg-white/5 p-2 rounded-lg border border-white/10">
+                        <p class="font-bold text-cyan-400">💎 Diamond (Lv. 12-15)</p>
+                        <p class="text-[10px] text-green-400">+50% Points Bonus</p>
+                    </div>
+                </div>
+            </div>
         </section>
 
+        <!-- PAGE 2: WITHDRAWAL -->
         <section id="page-retrait" class="hidden-page space-y-4">
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                <h3 class="font-bold text-gray-800 text-lg mb-2">Demander un Retrait</h3>
-                <p class="text-xs text-gray-500 mb-4">Seuils minimum : 1000 Pts = 1$ USDT. Le traitement prend 24h à 48h maximum.</p>
+                <h3 class="font-bold text-gray-800 text-lg mb-2">Request Withdrawal</h3>
+                <p class="text-xs text-gray-500 mb-4">Minimum threshold: 1000 Pts = $1 USDT. Orders processed within 24-48 hours.</p>
                 
                 <form id="form-withdrawal" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Méthode de Paiement</label>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Payment Network</label>
                         <select id="withdraw-method" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm font-medium text-gray-700 focus:outline-none focus:border-blue-500">
-                            <option value="USDT_TRC20">USDT (TRC20) - Recommandé</option>
+                            <option value="USDT_TRC20">USDT (TRC20) - Fast Crypto</option>
                             <option value="Bitcoin">Bitcoin (BTC)</option>
                         </select>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Adresse de Portefeuille Crypto</label>
-                        <input id="withdraw-address" type="text" placeholder="Entrez votre adresse de retrait" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm focus:outline-none focus:border-blue-500" required>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Crypto Wallet Address</label>
+                        <input id="withdraw-address" type="text" placeholder="Paste your secure wallet address address" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm focus:outline-none focus:border-blue-500" required>
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Montant à retirer (en Points)</label>
-                        <input id="withdraw-amount" type="number" min="1000" placeholder="Ex: 1000" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm focus:outline-none focus:border-blue-500" required>
+                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Amount to Withdraw (Points)</label>
+                        <input id="withdraw-amount" type="number" min="1000" placeholder="e.g., 1000" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm focus:outline-none focus:border-blue-500" required>
                     </div>
 
                     <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-base">
                         <i class="fa-solid fa-wallet"></i>
-                        <span>Soumettre la demande</span>
+                        <span>Submit Payout Request</span>
                     </button>
                 </form>
             </div>
@@ -101,23 +146,26 @@
 
     </main>
 
+    <!-- BOTTOM TAB NAVIGATION -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-xl z-50">
         <div class="max-w-md mx-auto flex justify-around items-center h-16">
             <button onclick="switchTab('flux')" id="tab-flux" class="flex flex-col items-center gap-1 text-xs font-bold transition-all active-tab w-1/2 py-2">
                 <i class="fa-solid fa-mobile-screen-button text-xl"></i>
-                <span>Flux</span>
+                <span>Tasks</span>
             </button>
             <button onclick="switchTab('retrait')" id="tab-retrait" class="flex flex-col items-center gap-1 text-xs font-bold text-gray-400 transition-all w-1/2 py-2">
                 <i class="fa-solid fa-briefcase text-xl"></i>
-                <span>Retrait</span>
+                <span>Withdrawal</span>
             </button>
         </div>
     </nav>
 
+    <!-- FIREBASE AND GAMIFICATION BACKEND INTERACTION MODULE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
+        // Firebase Setup
         const firebaseConfig = {
             apiKey: "AIzaSyC4scu9gaASk5Pv2CXUXiXf_hFmWh_3p9o",
             authDomain: "pubgain-679fb.firebaseapp.com",
@@ -134,21 +182,74 @@
         const userId = "user_demo_123";
         const userRef = doc(db, "users", userId);
 
+        // Core App Variables
         let currentPoints = 0;
+        let currentLevel = 1;
+        let currentXp = 0;
+        const xpPerLevelBase = 100; // Each level requires Level * 100 XP to rank up
 
+        // Load or initiate User Record
         async function loadUserData() {
             try {
                 const userSnap = await getDoc(userRef);
                 if (userSnap.exists()) {
-                    currentPoints = userSnap.data().points || 0;
+                    const data = userSnap.data();
+                    currentPoints = data.points || 0;
+                    currentLevel = data.level || 1;
+                    currentXp = data.xp || 0;
                 } else {
-                    await setDoc(userRef, { points: 0 });
+                    // Create default fields for New Profile
+                    await setDoc(userRef, { points: 0, level: 1, xp: 0 });
                     currentPoints = 0;
+                    currentLevel = 1;
+                    currentXp = 0;
                 }
-                document.getElementById('user-points').innerText = currentPoints;
+                updateDashboardUI();
             } catch (err) {
-                console.error("Erreur Firebase:", err);
+                console.error("Firebase fetch error:", err);
             }
+        }
+
+        // Dynamically compute Level Requirements, VIP Status Tier, and Update Visual elements
+        function updateDashboardUI() {
+            const nextLevelXpNeeded = currentLevel * xpPerLevelBase;
+            
+            // Determine VIP rank & multiplier
+            let vipName = "VIP Bronze";
+            let vipColorClass = ["bg-amber-600", "text-white"];
+            let baseReward = 15;
+            let finalReward = baseReward;
+
+            if (currentLevel >= 4 && currentLevel <= 7) {
+                vipName = "VIP Silver (+10%)";
+                vipColorClass = ["bg-slate-300", "text-gray-900"];
+                finalReward = Math.round(baseReward * 1.1);
+            } else if (currentLevel >= 8 && currentLevel <= 11) {
+                vipName = "VIP Gold (+25%)";
+                vipColorClass = ["bg-yellow-400", "text-gray-900"];
+                finalReward = Math.round(baseReward * 1.25);
+            } else if (currentLevel >= 12) {
+                vipName = "VIP Diamond (+50%)";
+                vipColorClass = ["bg-cyan-400", "text-gray-900"];
+                finalReward = Math.round(baseReward * 1.5);
+            }
+
+            // Apply Text and values to GUI Elements
+            document.getElementById('user-points').innerText = currentPoints;
+            document.getElementById('txt-level').innerText = currentLevel;
+            document.getElementById('txt-xp').innerText = currentXp;
+            document.getElementById('txt-next-xp').innerText = nextLevelXpNeeded;
+            
+            // Progress Fill calculation
+            const percentage = (currentXp / nextLevelXpNeeded) * 100;
+            document.getElementById('xp-bar').style.width = `${Math.min(percentage, 100)}%`;
+
+            // Badge Updates
+            const vipBadge = document.getElementById('user-vip');
+            vipBadge.innerText = vipName;
+            vipBadge.className = `text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider w-max mt-0.5 ${vipColorClass[0]} ${vipColorClass[1]}`;
+            
+            document.getElementById('reward-badge').innerText = `+${finalReward} Pts`;
         }
 
         function showToast(text) {
@@ -160,18 +261,18 @@
             }, 2500);
         }
 
+        // Action Trigger for Ads Click automation loop
         const btnTask = document.getElementById('btn-task');
         const timerBox = document.getElementById('timer-box');
         const timerCount = document.getElementById('timer-count');
         const progressBar = document.getElementById('progress-bar');
-
         let isRunning = false;
 
         btnTask.addEventListener('click', () => {
             if (isRunning) return;
             isRunning = true;
             
-            // INTEGRATION REEL DE TON SMARTLINK ICI 
+            // Target Smartlink launch
             window.open('https://landslidegraphsystems.com/xfm6wh1g?key=02d9c6083bf9c5d2ce191a4137681d41', '_blank');
 
             btnTask.disabled = true;
@@ -190,21 +291,51 @@
                 if (timeLeft <= 0) {
                     clearInterval(interval);
                     
+                    // Award Calculation logic based on level tier
+                    let pointsToGrant = 15;
+                    if (currentLevel >= 4 && currentLevel <= 7) pointsToGrant = Math.round(15 * 1.1);
+                    else if (currentLevel >= 8 && currentLevel <= 11) pointsToGrant = Math.round(15 * 1.25);
+                    else if (currentLevel >= 12) pointsToGrant = Math.round(15 * 1.5);
+
+                    let xpToGrant = 10;
+                    
+                    // Increment Local state tracking
+                    currentPoints += pointsToGrant;
+                    currentXp += xpToGrant;
+
+                    // Level Up Verification checks (Up to maximum capability limit of 15 levels)
+                    let levelUpOccurred = false;
+                    let nextLevelRequiredXp = currentLevel * xpPerLevelBase;
+                    
+                    if (currentXp >= nextLevelRequiredXp && currentLevel < 15) {
+                        currentXp -= nextLevelRequiredXp;
+                        currentLevel += 1;
+                        levelUpOccurred = true;
+                    }
+
                     try {
+                        // Persist progress directly to Firestore cloud dataset
                         await updateDoc(userRef, {
-                            points: increment(15)
+                            points: currentPoints,
+                            xp: currentXp,
+                            level: currentLevel
                         });
                         
-                        currentPoints += 15;
-                        document.getElementById('user-points').innerText = currentPoints;
+                        updateDashboardUI();
                         
-                        showToast("Tâche validée ! +15 🪙 ajoutés.");
-                        confetti({ particleCount: 80, spread: 60, origin: { y: 0.8 } });
+                        if (levelUpOccurred) {
+                            showToast(`🎉 LEVEL UP! You reached Level ${currentLevel}!`);
+                            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+                        } else {
+                            showToast(`Task verified! +${pointsToGrant} 🪙 and +10 XP added.`);
+                            confetti({ particleCount: 60, spread: 40, origin: { y: 0.8 } });
+                        }
                     } catch (e) {
-                        showToast("Erreur lors de l'enregistrement.");
+                        showToast("Network save sync delay occurred.");
                         console.error(e);
                     }
 
+                    // Reset interface states for user interaction loops
                     isRunning = false;
                     btnTask.disabled = false;
                     btnTask.classList.remove('opacity-50');
@@ -213,6 +344,7 @@
             }, 1000);
         });
 
+        // Safe Request submission mapping
         document.getElementById('form-withdrawal').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -221,43 +353,46 @@
             const amount = parseInt(document.getElementById('withdraw-amount').value);
 
             if (amount > currentPoints) {
-                showToast("Solde insuffisant !");
+                showToast("Insufficient point balances!");
                 return;
             }
             if (amount < 1000) {
-                showToast("Le minimum est de 1000 points.");
+                showToast("Minimum allowed withdrawal is 1,000 points.");
                 return;
             }
 
             try {
+                // Post logs to Database queue
                 await addDoc(collection(db, "withdrawals"), {
                     userId: userId,
-                    methode: method,
-                    adressePortefeuille: address,
-                    montantPoints: amount,
-                    statut: "En attente",
-                    dateDemande: serverTimestamp()
+                    method: method,
+                    walletAddress: address,
+                    pointsAmount: amount,
+                    status: "Pending review",
+                    timestamp: serverTimestamp()
                 });
 
-                await updateDoc(userRef, {
-                    points: increment(-amount)
-                });
-
+                // Deduct balances safely 
                 currentPoints -= amount;
-                document.getElementById('user-points').innerText = currentPoints;
-                
-                showToast("Demande de retrait soumise !");
+                await updateDoc(userRef, {
+                    points: currentPoints
+                });
+
+                updateDashboardUI();
+                showToast("Payout request submitted successfully!");
                 document.getElementById('form-withdrawal').reset();
             } catch (err) {
-                showToast("Erreur lors du retrait.");
+                showToast("Error processing withdrawal pipeline.");
                 console.error(err);
             }
         });
 
+        // Initialize App Session Data on component mount
         loadUserData();
     </script>
 
     <script>
+        // Simple View routing controller
         function switchTab(tabName) {
             const fluxPage = document.getElementById('page-flux');
             const retraitPage = document.getElementById('page-retrait');
