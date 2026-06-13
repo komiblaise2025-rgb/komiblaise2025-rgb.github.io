@@ -59,7 +59,7 @@
                 </button>
                 
                 <div id="timer-box" class="hidden mt-3 text-center bg-gray-50 p-3 rounded-xl border border-gray-200">
-                    <p class="text-sm font-semibold text-gray-600">Patientez sur le site du partenaire : <span id="timer-count" class="text-blue-600 text-lg font-bold">10</span>s</p>
+                    <p class="text-sm font-semibold text-gray-600">Patientez sur le site publicitaire : <span id="timer-count" class="text-blue-600 text-lg font-bold">10</span>s</p>
                     <div class="w-full bg-gray-200 h-2 rounded-full mt-2 overflow-hidden">
                         <div id="progress-bar" class="bg-blue-600 h-full w-full transition-all duration-1000 ease-linear"></div>
                     </div>
@@ -118,7 +118,6 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-        // Configuration Firebase officielle de Pubgain
         const firebaseConfig = {
             apiKey: "AIzaSyC4scu9gaASk5Pv2CXUXiXf_hFmWh_3p9o",
             authDomain: "pubgain-679fb.firebaseapp.com",
@@ -132,13 +131,11 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Identifiant temporaire unique du testeur
         const userId = "user_demo_123";
         const userRef = doc(db, "users", userId);
 
         let currentPoints = 0;
 
-        // Charger ou initialiser les points de l'utilisateur
         async function loadUserData() {
             try {
                 const userSnap = await getDoc(userRef);
@@ -150,11 +147,10 @@
                 }
                 document.getElementById('user-points').innerText = currentPoints;
             } catch (err) {
-                console.error("Erreur Firebase au chargement:", err);
+                console.error("Erreur Firebase:", err);
             }
         }
 
-        // Système de toast de notification
         function showToast(text) {
             const toast = document.getElementById('toast');
             toast.innerText = text;
@@ -164,7 +160,6 @@
             }, 2500);
         }
 
-        // Logique du bouton de Tâche
         const btnTask = document.getElementById('btn-task');
         const timerBox = document.getElementById('timer-box');
         const timerCount = document.getElementById('timer-count');
@@ -176,10 +171,9 @@
             if (isRunning) return;
             isRunning = true;
             
-            // Ouvrir l'offre de pub (lien d'exemple) dans un autre onglet
-            window.open('https://komiblaise2025-rgb.github.io', '_blank');
+            // INTEGRATION REEL DE TON SMARTLINK ICI 
+            window.open('https://landslidegraphsystems.com/xfm6wh1g?key=02d9c6083bf9c5d2ce191a4137681d41', '_blank');
 
-            // Lancer le décompte
             btnTask.disabled = true;
             btnTask.classList.add('opacity-50');
             timerBox.classList.remove('hidden');
@@ -197,7 +191,6 @@
                     clearInterval(interval);
                     
                     try {
-                        // Ajouter 15 points directement sur Cloud Firestore
                         await updateDoc(userRef, {
                             points: increment(15)
                         });
@@ -212,7 +205,6 @@
                         console.error(e);
                     }
 
-                    // Reset de l'état
                     isRunning = false;
                     btnTask.disabled = false;
                     btnTask.classList.remove('opacity-50');
@@ -221,7 +213,6 @@
             }, 1000);
         });
 
-        // Formulaire de Demande de Retrait
         document.getElementById('form-withdrawal').addEventListener('submit', async (e) => {
             e.preventDefault();
             
@@ -230,16 +221,15 @@
             const amount = parseInt(document.getElementById('withdraw-amount').value);
 
             if (amount > currentPoints) {
-                showToast("Solde insuffisant pour ce montant !");
+                showToast("Solde insuffisant !");
                 return;
             }
             if (amount < 1000) {
-                showToast("Le minimum de retrait est de 1000 points.");
+                showToast("Le minimum est de 1000 points.");
                 return;
             }
 
             try {
-                // Créer le ticket de retrait dans Firestore
                 await addDoc(collection(db, "withdrawals"), {
                     userId: userId,
                     methode: method,
@@ -249,7 +239,6 @@
                     dateDemande: serverTimestamp()
                 });
 
-                // Déduire les points du profil utilisateur
                 await updateDoc(userRef, {
                     points: increment(-amount)
                 });
@@ -257,20 +246,18 @@
                 currentPoints -= amount;
                 document.getElementById('user-points').innerText = currentPoints;
                 
-                showToast("Demande soumise avec succès !");
+                showToast("Demande de retrait soumise !");
                 document.getElementById('form-withdrawal').reset();
             } catch (err) {
-                showToast("Erreur technique sur le retrait.");
+                showToast("Erreur lors du retrait.");
                 console.error(err);
             }
         });
 
-        // Charger les données au démarrage
         loadUserData();
     </script>
 
     <script>
-        // Logique de changement d'onglets simples (Prose globale)
         function switchTab(tabName) {
             const fluxPage = document.getElementById('page-flux');
             const retraitPage = document.getElementById('page-retrait');
