@@ -7,7 +7,8 @@
     <title>PubGain - Level & VIP Edition</title>
     
     <link rel="preconnect" href="https://firestore.googleapis.com">
-    <link rel="preconnect" href="https://www.gstatic.com">
+    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
           media="print" onload="this.media='all'; this.onload=null;">
@@ -15,20 +16,37 @@
     <style>
         body {
             -webkit-tap-highlight-color: transparent;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-family: 'Segoe UI', system-ui, Roboto, Helvetica, sans-serif;
             background-color: #f3f4f6;
+            margin: 0;
+            padding-bottom: 6rem;
+            min-height: 100vh;
+            user-select: none;
+            -webkit-user-select: none;
         }
-        .active-tab { color: #2563eb; }
-        .hidden-page { display: none; }
+        .active-tab { color: #2563eb !important; }
+        .hidden-page { display: none !important; }
+        
+        /* Styles structurels compilés pour éliminer l'attente Tailwind au premier affichage */
+        .bg-blue-600 { background-color: #2563eb; }
+        .bg-white { background-color: #ffffff; }
+        .text-white { color: #ffffff; }
+        .p-4 { padding: 1rem; }
+        .sticky { position: sticky; }
+        .top-0 { top: 0; }
+        .z-50 { z-index: 50; }
+        .flex { display: flex; }
+        .justify-between { justify-content: space-between; }
+        .items-center { align-items: center; }
         .max-w-md { max-w: 28rem; }
         .mx-auto { margin-left: auto; margin-right: auto; }
-        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06); }
         .rounded-2xl { border-radius: 1rem; }
     </style>
 
     <script src="https://cdn.tailwindcss.com" defer></script>
 </head>
-<body class="bg-gray-100 font-sans min-h-screen pb-24 select-none">
+<body class="bg-gray-100 font-sans">
 
     <header class="bg-blue-600 text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center">
         <div class="flex flex-col">
@@ -179,8 +197,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        // Délai sur Analytics pour ne pas bloquer le fil d'exécution au démarrage
-        setTimeout(() => { getAnalytics(app); }, 3800);
+        // Initialisation asynchrone non-bloquante de Google Analytics après le chargement UI principal
+        setTimeout(() => { try { getAnalytics(app); } catch(e){} }, 4000);
 
         const userId = "user_demo_123";
         const userRef = doc(db, "users", userId);
@@ -203,7 +221,7 @@
                 }
                 updateDashboardUI();
             } catch (err) {
-                console.error("Firebase load error:", err);
+                console.error("Firebase Database communication failure:", err);
             }
         }
 
@@ -366,24 +384,24 @@
             }
         }
 
-        // Stratégie d'optimisation : Charge les dépendances non-essentielles au premier clic ou après 4s d'inactivité
+        // Chargement ultra-tardif des scripts d'analyse et de bonus
         window.addEventListener('load', function() {
-            var scriptsLoaded = false;
-            function deferLoad() {
-                if (scriptsLoaded) return;
-                scriptsLoaded = true;
+            var lazyAssetsExecuted = false;
+            function loadLazyAssets() {
+                if (lazyAssetsExecuted) return;
+                lazyAssetsExecuted = true;
 
-                // 1. Script d'animation Confetti (Chargé à la demande)
-                var conf = document.createElement('script');
-                conf.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
-                conf.defer = true;
-                document.head.appendChild(conf);
+                // Canvas Confetti
+                var cScript = document.createElement('script');
+                cScript.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
+                cScript.defer = true;
+                document.head.appendChild(cScript);
 
-                // 2. Script Google Analytics Global
-                var ga = document.createElement('script');
-                ga.src = "https://www.googletagmanager.com/gtag/js?id=G-1N3RNVHSCD";
-                ga.async = true;
-                document.head.appendChild(ga);
+                // Google Analytics Core Tracking
+                var gScript = document.createElement('script');
+                gScript.src = "https://www.googletagmanager.com/gtag/js?id=G-1N3RNVHSCD";
+                gScript.async = true;
+                document.head.appendChild(gScript);
 
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
@@ -391,9 +409,13 @@
                 gtag('config', 'G-1N3RNVHSCD', { 'anonymize_ip': true });
             }
 
-            setTimeout(deferLoad, 4000);
+            // Exécution automatique après 4,5 secondes d'inactivité ou au premier geste tactile léger
+            var fallbackTimeout = setTimeout(loadLazyAssets, 4500);
             ['touchstart', 'scroll', 'click'].forEach(function(evt) {
-                window.addEventListener(evt, deferLoad, {once: true, passive: true});
+                window.addEventListener(evt, function() {
+                    clearTimeout(fallbackTimeout);
+                    loadLazyAssets();
+                }, {once: true, passive: true});
             });
         });
     </script>
