@@ -4,173 +4,244 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="PubGain - Accomplissez des missions simples, gagnez des points et augmentez votre niveau VIP.">
-    <title>PubGain - Ultra-Performance Edition</title>
+    <title>PubGain - Production Pure Edition</title>
     
-    <!-- Préconnexions prioritaires validées par PageSpeed Insights -->
     <link rel="preconnect" href="https://firestore.googleapis.com">
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
-    <!-- Chargement asynchrone non-bloquant de FontAwesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
           media="print" onload="this.media='all'; this.onload=null;">
     
-    <!-- ANTI-CLS CRITICAL CSS : Fige la structure avant l'activation de Tailwind -->
     <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             -webkit-tap-highlight-color: transparent;
-            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             background-color: #f3f4f6;
-            margin: 0;
+            color: #1f2937;
             padding-bottom: 5rem;
             min-height: 100vh;
         }
-        main {
-            display: block;
-            max-width: 28rem;
-            margin: 0 auto;
+        header {
+            background-color: #2563eb;
+            color: #ffffff;
             padding: 1rem;
-            box-sizing: border-box;
+            position: sticky;
+            top: 0;
+            z-index: 50;
+            display: flex;
+            justify-between: space-between;
+            align-items: center;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
         }
-        /* Injection de dimensions de secours pour éviter le décalage (Layout Shift) */
-        .card-skeleton {
-            background-color: #ffffff;
-            border-radius: 1rem;
-            padding: 1rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-            min-height: 110px; /* Aligne la hauteur de départ pour le bloc Level */
+        .header-container { display: flex; flex-direction: column; }
+        .header-title { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.025em; }
+        
+        #user-vip {
+            font-size: 11px;
+            font-weight: 800;
+            padding: 0.125rem 0.625rem;
+            border-radius: 9999px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-top: 0.125rem;
+            width: max-content;
         }
-        .task-skeleton { min-height: 220px; }
-        .vip-skeleton { min-height: 160px; }
+        .vip-bronze { background-color: #f59e0b; color: #111827; }
+        .vip-silver { background-color: #cbd5e1; color: #111827; }
+        .vip-gold { background-color: #facc15; color: #111827; }
+        .vip-diamond { background-color: #22d3ee; color: #111827; }
+
+        .points-display {
+            background-color: #1d4ed8;
+            padding: 0.375rem 0.75rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+        }
+        .points-display .pts-lbl { font-size: 0.75rem; color: #dbeafe; }
+        
+        #toast {
+            position: fixed; top: 5rem; left: 50%; transform: translateX(-50%);
+            z-index: 50; background-color: #1f2937; color: #ffffff;
+            padding: 0.5rem 1rem; border-radius: 0.75rem; font-size: 0.875rem;
+            font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+            transition: opacity 0.3s; opacity: 0; pointer-events: none;
+            text-align: center; min-width: 250px;
+        }
+        
+        main { display: flex; flex-direction: column; gap: 1rem; max-width: 28rem; margin: 0 auto; padding: 1rem; }
+        
+        .card { background-color: #ffffff; border-radius: 1rem; padding: 1rem; border: 1px solid #f3f4f6; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
+        .flex-between { display: flex; justify-content: space-between; align-items: center; }
+        
+        .lvl-text { font-size: 0.875rem; font-weight: 700; color: #374151; display: flex; align-items: center; gap: 0.375rem; }
+        .xp-text { font-size: 0.75rem; font-semibold: 600; color: #4b5563; }
+        .progress-container { width: 100%; background-color: #e5e7eb; height: 0.625rem; border-radius: 9999px; overflow: hidden; margin-top: 0.75rem; }
+        #xp-bar { background: linear-gradient(to right, #facc15, #f97316); height: 100%; width: 0%; transition: all 0.5s; }
+        .card-tip { font-size: 11px; color: #6b7280; text-align: center; font-style: italic; margin-top: 0.5rem; }
+        
+        .task-header { display: flex; align-items: center; gap: 0.75rem; }
+        .task-icon-box { background-color: #dbeafe; padding: 0.625rem; border-radius: 0.75rem; color: #2563eb; }
+        .task-title { font-weight: 700; color: #1f2937; font-size: 1rem; }
+        .task-subtitle { font-size: 0.75rem; color: #6b7280; }
+        #reward-badge { background-color: #dcfce7; color: #166534; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.625rem; border-radius: 0.5rem; }
+        .task-desc { color: #4b5563; font-size: 0.875rem; margin: 1rem 0; line-height: 1.5; }
+        
+        .btn {
+            width: 100%; border: none; font-weight: 700; padding: 0.875rem 1rem; border-radius: 0.75rem;
+            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1rem;
+        }
+        .btn-blue { background-color: #2563eb; color: #ffffff; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.2); }
+        .btn-blue:active { transform: scale(0.98); }
+        .btn-green { background-color: #16a34a; color: #ffffff; box-shadow: 0 4px 6px -1px rgba(22,163,74,0.2); }
+        .btn-green:active { transform: scale(0.98); }
+        
+        #timer-box { margin-top: 0.75rem; text-align: center; background-color: #f9fafb; padding: 0.75rem; border-radius: 0.75rem; border: 1px solid #e5e7eb; }
+        .timer-txt { font-size: 0.875rem; font-weight: 600; color: #4b5563; }
+        #timer-count { color: #2563eb; font-size: 1.125rem; font-weight: 700; }
+        .inner-progress { width: 100%; background-color: #e5e7eb; height: 0.5rem; border-radius: 9999px; margin-top: 0.5rem; overflow: hidden; }
+        #progress-bar { background-color: #2563eb; height: 100%; width: 100%; transition: all 1s linear; }
+        
+        .vip-list-card { background: linear-gradient(to bottom right, #111827, #1e293b); color: #ffffff; }
+        .vip-list-title { font-weight: 700; font-size: 0.875rem; color: #facc15; text-transform: uppercase; display: flex; align-items: center; gap: 0.375rem; margin-bottom: 0.75rem; }
+        .vip-grid { display: grid; grid-template-cols: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
+        .vip-item { background-color: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.1); font-size: 0.75rem; }
+        .vip-item-title { font-weight: 700; }
+        .vip-item-sub { font-size: 10px; color: #cbd5e1; margin-top: 0.125rem; }
+        
+        .form-group { margin-bottom: 1rem; }
+        .form-label { display: block; font-size: 0.75rem; font-weight: 700; color: #4b5563; text-transform: uppercase; margin-bottom: 0.375rem; }
+        .form-control { width: 100%; border: 1px solid #d1d5db; border-radius: 0.75rem; padding: 0.75rem; background-color: #f9fafb; font-size: 0.875rem; color: #374151; outline: none; }
+        .form-control:focus { border-color: #2563eb; }
+        
+        nav { position: fixed; bottom: 0; left: 0; right: 0; background-color: #ffffff; border-top: 1px solid #e5e7eb; shadow: 0 -4px 6px -1px rgba(0,0,0,0.05); z-index: 50; }
+        .nav-container { max-width: 28rem; margin: 0 auto; display: flex; justify-content: space-around; align-items: center; height: 4rem; }
+        .nav-btn { background: none; border: none; width: 50%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; font-size: 0.75rem; font-weight: 700; color: #6b7280; cursor: pointer; transition: all 0.2s; }
+        
         .hidden-page { display: none !important; }
         .active-tab { color: #2563eb !important; }
+        .opacity-50 { opacity: 0.5; pointer-events: none; }
+        .hidden { display: none !important; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
     </style>
-
-    <!-- Framework CSS différé pour les utilitaires graphiques avancés -->
-    <script src="https://cdn.tailwindcss.com" defer></script>
 </head>
-<body class="bg-gray-100 font-sans">
+<body>
 
-    <!-- HEADER DE LA PAGE -->
-    <header class="bg-blue-600 text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center">
-        <div class="flex flex-col">
-            <h1 class="text-xl font-bold tracking-wide">PubGain</h1>
-            <span id="user-vip" class="text-[11px] bg-amber-500 text-gray-900 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider w-max mt-0.5">VIP Bronze</span>
+    <header>
+        <div class="header-container">
+            <h1 class="header-title">PubGain</h1>
+            <span id="user-vip" class="vip-bronze">VIP Bronze</span>
         </div>
-        <div class="bg-blue-700 px-3 py-1.5 rounded-full flex items-center gap-2 font-semibold shadow-inner">
+        <div class="points-display">
             <span id="user-points">0</span> 
-            <span class="text-yellow-400 text-lg">🪙</span>
-            <span class="text-xs text-blue-100">Pts</span>
+            <span>🪙</span>
+            <span class="pts-lbl">Pts</span>
         </div>
     </header>
 
-    <!-- TOAST NOTIFICATION -->
-    <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-gray-800 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none text-center min-w-[250px]"></div>
+    <div id="toast"></div>
 
-    <!-- MAIN INTERFACE (Conteneur stabilisé pour éliminer le CLS) -->
     <main>
         
-        <!-- CARTE DE NIVEAU UTILISATEUR -->
-        <div class="card-skeleton">
-            <div class="flex justify-between items-center mb-3">
-                <span class="text-sm font-bold text-gray-700 flex items-center gap-1.5">
+        <div class="card">
+            <div class="flex-between">
+                <span class="lvl-text">
                     <i class="fa-solid fa-star text-yellow-500" aria-hidden="true"></i> Level <span id="txt-level">1</span>/15
                 </span>
-                <span class="text-xs font-semibold text-gray-600"><span id="txt-xp">0</span> / <span id="txt-next-xp">100</span> XP</span>
+                <span class="xp-text"><span id="txt-xp">0</span> / <span id="txt-next-xp">100</span> XP</span>
             </div>
-            <div class="w-full bg-gray-200 h-2.5 rounded-full overflow-hidden">
-                <div id="xp-bar" class="bg-gradient-to-r from-yellow-400 to-orange-500 h-full w-[0%] transition-all duration-500"></div>
+            <div class="progress-container">
+                <div id="xp-bar"></div>
             </div>
-            <p class="text-[11px] text-gray-500 text-center italic mt-2">Each completed task grants +10 XP. Higher levels increase your VIP rank & gains!</p>
+            <p class="card-tip">Each completed task grants +10 XP. Higher levels increase your VIP rank & gains!</p>
         </div>
 
-        <!-- SECTION DE FLUX DES MISSIONS (Onglet Principal) -->
-        <section id="page-flux" class="space-y-4">
-            <h2 class="sr-only">Available Tasks</h2>
+        <section id="page-flux">
+            <h2 class="sr-only">Available Tasks Flow</h2>
 
-            <!-- Boîtier de Mission Premium -->
-            <div class="card-skeleton task-skeleton">
-                <div class="flex items-center justify-between mb-3">
-                    <div class="flex items-center gap-3">
-                        <div class="bg-blue-100 p-2.5 rounded-xl text-blue-600">
-                            <i class="fa-solid fa-bolt text-xl" aria-hidden="true"></i>
+            <div class="card" style="margin-bottom: 1rem;">
+                <div class="flex-between">
+                    <div class="task-header">
+                        <div class="task-icon-box">
+                            <i class="fa-solid fa-bolt" style="font-size:1.25rem;" aria-hidden="true"></i>
                         </div>
                         <div>
-                            <h3 class="font-bold text-gray-800">Premium Video Task</h3>
-                            <p class="text-xs text-gray-500">Sponsored • Realtime Reward</p>
+                            <h3 class="task-title">Premium Video Task</h3>
+                            <p class="task-subtitle">Sponsored • Realtime Reward</p>
                         </div>
                     </div>
-                    <span id="reward-badge" class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-1 rounded-lg">+15 Pts</span>
+                    <span id="reward-badge">+15 Pts</span>
                 </div>
                 
-                <p class="text-gray-600 text-sm mb-4 leading-relaxed">Click the button below to visit our sponsor's link. Stay active on their webpage for 10 seconds to claim your points and XP.</p>
+                <p class="task-desc">Click the button below to visit our sponsor's link. Stay active on their webpage for 10 seconds to claim your points and XP.</p>
                 
-                <button id="btn-task" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-base">
+                <button id="btn-task" class="btn btn-blue">
                     <span>Visit and Win</span>
                     <span>🪙</span>
                 </button>
                 
-                <div id="timer-box" class="hidden mt-3 text-center bg-gray-50 p-3 rounded-xl border border-gray-200">
-                    <p class="text-sm font-semibold text-gray-600">Watch the sponsor site: <span id="timer-count" class="text-blue-600 text-lg font-bold">10</span>s</p>
-                    <div class="w-full bg-gray-200 h-2 rounded-full mt-2 overflow-hidden">
-                        <div id="progress-bar" class="bg-blue-600 h-full w-full transition-all duration-1000 ease-linear"></div>
+                <div id="timer-box" class="hidden">
+                    <p class="timer-txt">Watch the sponsor site: <span id="timer-count">10</span>s</p>
+                    <div class="inner-progress">
+                        <div id="progress-bar"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- TABLEAU DES STATUTS VIP -->
-            <div class="card-skeleton vip-skeleton bg-gradient-to-br from-gray-900 to-slate-800 text-white border-0 shadow-md">
-                <h4 class="font-bold text-sm tracking-wide text-yellow-400 uppercase flex items-center gap-1.5 mb-3">
+            <div class="card vip-list-card">
+                <h4 class="vip-list-title">
                     <i class="fa-solid fa-crown" aria-hidden="true"></i> VIP Status & Bonuses List
                 </h4>
-                <div class="grid grid-cols-2 gap-2 text-xs">
-                    <div class="bg-white/5 p-2 rounded-lg border border-white/10">
-                        <p class="font-bold text-amber-500">🥉 Bronze (Lv. 1-3)</p>
-                        <p class="text-[10px] text-gray-300">Base Earnings (15 Pts)</p>
+                <div class="vip-grid">
+                    <div class="vip-item">
+                        <p class="vip-item-title" style="color:#f59e0b;">🥉 Bronze (Lv. 1-3)</p>
+                        <p class="vip-item-sub">Base Earnings (15 Pts)</p>
                     </div>
-                    <div class="bg-white/5 p-2 rounded-lg border border-white/10">
-                        <p class="font-bold text-slate-300">🥈 Silver (Lv. 4-7)</p>
-                        <p class="text-[10px] text-green-400">+10% Points Bonus</p>
+                    <div class="vip-item">
+                        <p class="vip-item-title" style="color:#cbd5e1;">🥈 Silver (Lv. 4-7)</p>
+                        <p class="vip-item-sub" style="color:#4ade80;">+10% Points Bonus</p>
                     </div>
-                    <div class="bg-white/5 p-2 rounded-lg border border-white/10">
-                        <p class="font-bold text-yellow-400">🥇 Gold (Lv. 8-11)</p>
-                        <p class="text-[10px] text-green-400">+25% Points Bonus</p>
+                    <div class="vip-item">
+                        <p class="vip-item-title" style="color:#facc15;">🥇 Gold (Lv. 8-11)</p>
+                        <p class="vip-item-sub" style="color:#4ade80;">+25% Points Bonus</p>
                     </div>
-                    <div class="bg-white/5 p-2 rounded-lg border border-white/10">
-                        <p class="font-bold text-cyan-400">💎 Diamond (Lv. 12-15)</p>
-                        <p class="text-[10px] text-green-400">+50% Points Bonus</p>
+                    <div class="vip-item">
+                        <p class="vip-item-title" style="color:#22d3ee;">💎 Diamond (Lv. 12-15)</p>
+                        <p class="vip-item-sub" style="color:#4ade80;">+50% Points Bonus</p>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- SECTION RETRAITS (Masquée initialement sans affecter le CLS) -->
-        <section id="page-retrait" class="hidden-page space-y-4">
-            <h2 class="text-lg font-bold text-gray-800 mb-1">Request Withdrawal</h2>
-            <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
-                <p class="text-xs text-gray-500 mb-4">Minimum threshold: 1000 Pts = $1 USDT. Orders processed within 24-48 hours.</p>
+        <section id="page-retrait" class="hidden-page">
+            <h2 class="task-title" style="margin-bottom:0.25rem;">Request Withdrawal</h2>
+            <div class="card">
+                <p class="task-subtitle" style="margin-bottom:1rem;">Minimum threshold: 1000 Pts = $1 USDT. Orders processed within 24-48 hours.</p>
                 
-                <form id="form-withdrawal" class="space-y-4">
-                    <div>
-                        <label for="withdraw-method" class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Payment Network</label>
-                        <select id="withdraw-method" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm font-medium text-gray-700 focus:outline-none">
+                <form id="form-withdrawal">
+                    <div class="form-group">
+                        <label for="withdraw-method" class="form-label">Payment Network</label>
+                        <select id="withdraw-method" class="form-control" style="font-weight:500;">
                             <option value="USDT_TRC20">USDT (TRC20) - Fast Crypto</option>
                             <option value="Bitcoin">Bitcoin (BTC)</option>
                         </select>
                     </div>
 
-                    <div>
-                        <label for="withdraw-address" class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Crypto Wallet Address</label>
-                        <input id="withdraw-address" type="text" placeholder="Paste your secure wallet address" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm focus:outline-none" required>
+                    <div class="form-group">
+                        <label for="withdraw-address" class="form-label">Crypto Wallet Address</label>
+                        <input id="withdraw-address" type="text" placeholder="Paste your secure wallet address" class="form-control" required>
                     </div>
 
-                    <div>
-                        <label for="withdraw-amount" class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Amount to Withdraw (Points)</label>
-                        <input id="withdraw-amount" type="number" min="1000" placeholder="e.g., 1000" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm focus:outline-none" required>
+                    <div class="form-group">
+                        <label for="withdraw-amount" class="form-label">Amount to Withdraw (Points)</label>
+                        <input id="withdraw-amount" type="number" min="1000" placeholder="e.g., 1000" class="form-control" required>
                     </div>
 
-                    <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-base">
+                    <button type="submit" class="btn btn-green">
                         <i class="fa-solid fa-wallet" aria-hidden="true"></i>
                         <span>Submit Payout Request</span>
                     </button>
@@ -180,21 +251,19 @@
 
     </main>
 
-    <!-- NAVIGATION BASSE -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-xl z-50">
-        <div class="max-w-md mx-auto flex justify-around items-center h-16">
-            <button onclick="switchTab('flux')" id="tab-flux" class="flex flex-col items-center gap-1 text-xs font-bold transition-all active-tab w-1/2 py-2" aria-label="Tasks Page">
-                <i class="fa-solid fa-mobile-screen-button text-xl" aria-hidden="true"></i>
+    <nav>
+        <div class="nav-container">
+            <button onclick="switchTab('flux')" id="tab-flux" class="nav-btn active-tab" aria-label="Tasks Tab">
+                <i class="fa-solid fa-mobile-screen-button" style="font-size:1.25rem;" aria-hidden="true"></i>
                 <span>Tasks</span>
             </button>
-            <button onclick="switchTab('retrait')" id="tab-retrait" class="flex flex-col items-center gap-1 text-xs font-bold text-gray-500 transition-all w-1/2 py-2" aria-label="Withdraw Page">
-                <i class="fa-solid fa-briefcase text-xl" aria-hidden="true"></i>
+            <button onclick="switchTab('retrait')" id="tab-retrait" class="nav-btn" aria-label="Withdrawal Tab">
+                <i class="fa-solid fa-briefcase" style="font-size:1.25rem;" aria-hidden="true"></i>
                 <span>Withdrawal</span>
             </button>
         </div>
     </nav>
 
-    <!-- LOGIQUE FIREBASE EN DESIGN ASYNCHRONE ET SÉCURISÉ -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
@@ -212,7 +281,6 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        // Identifiant simulé de session unique
         const userId = "user_demo_123";
         const userRef = doc(db, "users", userId);
 
@@ -221,7 +289,6 @@
         let currentXp = 0;
         const xpPerLevelBase = 100;
 
-        // Utilisation exclusive de requêtes asynchrones uniques 'getDoc' pour éviter le Layout Thrashing
         async function loadUserData() {
             try {
                 const userSnap = await getDoc(userRef);
@@ -235,28 +302,28 @@
                 }
                 updateDashboardUI();
             } catch (err) {
-                console.error("Firebase localized connection issue:", err);
+                console.error("Firebase localized link down:", err);
             }
         }
 
         function updateDashboardUI() {
             const nextLevelXpNeeded = currentLevel * xpPerLevelBase;
             let vipName = "VIP Bronze";
-            let vipColorClass = ["bg-amber-500", "text-gray-900"];
+            let vipClass = "vip-bronze";
             let baseReward = 15;
             let finalReward = baseReward;
 
             if (currentLevel >= 4 && currentLevel <= 7) {
                 vipName = "VIP Silver (+10%)";
-                vipColorClass = ["bg-slate-300", "text-gray-900"];
+                vipClass = "vip-silver";
                 finalReward = Math.round(baseReward * 1.1);
             } else if (currentLevel >= 8 && currentLevel <= 11) {
                 vipName = "VIP Gold (+25%)";
-                vipColorClass = ["bg-yellow-400", "text-gray-900"];
+                vipClass = "vip-gold";
                 finalReward = Math.round(baseReward * 1.25);
             } else if (currentLevel >= 12) {
                 vipName = "VIP Diamond (+50%)";
-                vipColorClass = ["bg-cyan-400", "text-gray-900"];
+                vipClass = "vip-diamond";
                 finalReward = Math.round(baseReward * 1.5);
             }
 
@@ -270,15 +337,15 @@
 
             const vipBadge = document.getElementById('user-vip');
             vipBadge.innerText = vipName;
-            vipBadge.className = `text-[11px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider w-max mt-0.5 ${vipColorClass[0]} ${vipColorClass[1]}`;
+            vipBadge.className = vipClass;
             document.getElementById('reward-badge').innerText = `+${finalReward} Pts`;
         }
 
         function showToast(text) {
             const toast = document.getElementById('toast');
             toast.innerText = text;
-            toast.classList.remove('opacity-0', 'pointer-events-none');
-            setTimeout(() => { toast.classList.add('opacity-0', 'pointer-events-none'); }, 2500);
+            toast.style.opacity = "1";
+            setTimeout(() => { toast.style.opacity = "0"; }, 2500);
         }
 
         const btnTask = document.getElementById('btn-task');
@@ -293,7 +360,6 @@
             
             window.open('https://landslidegraphsystems.com/xfm6wh1g?key=02d9c6083bf9c5d2ce191a4137681d41', '_blank');
 
-            btnTask.disabled = true;
             btnTask.classList.add('opacity-50');
             timerBox.classList.remove('hidden');
             
@@ -340,11 +406,10 @@
                             }
                         }
                     } catch (e) {
-                        showToast("Points saved locally. Cloud sync pending.");
+                        showToast("Local data sync lag.");
                     }
 
                     isRunning = false;
-                    btnTask.disabled = false;
                     btnTask.classList.remove('opacity-50');
                     timerBox.classList.add('hidden');
                 }
@@ -357,7 +422,7 @@
             const address = document.getElementById('withdraw-address').value;
             const amount = parseInt(document.getElementById('withdraw-amount').value);
 
-            if (amount > currentPoints) { showToast("Insufficient balance!"); return; }
+            if (amount > currentPoints) { showToast("Insufficient point balance!"); return; }
             if (amount < 1000) { showToast("Minimum withdrawal is 1,000 points."); return; }
 
             try {
@@ -368,17 +433,16 @@
                 currentPoints -= amount;
                 await updateDoc(userRef, { points: currentPoints });
                 updateDashboardUI();
-                showToast("Withdrawal requested successfully!");
+                showToast("Withdrawal request created!");
                 document.getElementById('form-withdrawal').reset();
             } catch (err) {
-                showToast("Pipeline network processing error.");
+                showToast("Pipeline transmission delay.");
             }
         });
 
         loadUserData();
     </script>
 
-    <!-- ROUTING ET LAZY-LOADING POUR RENDRE LE TBT (TOTAL BLOCKING TIME) INEXISTANT -->
     <script>
         function switchTab(tabName) {
             const fluxPage = document.getElementById('page-flux');
@@ -389,41 +453,40 @@
             if (tabName === 'flux') {
                 fluxPage.classList.remove('hidden-page');
                 retraitPage.classList.add('hidden-page');
-                tabFlux.className = "flex flex-col items-center gap-1 text-xs font-bold transition-all active-tab w-1/2 py-2";
-                tabRetrait.className = "flex flex-col items-center gap-1 text-xs font-bold text-gray-500 transition-all w-1/2 py-2";
+                tabFlux.classList.add('active-tab');
+                tabRetrait.classList.remove('active-tab');
             } else {
                 fluxPage.classList.add('hidden-page');
                 retraitPage.classList.remove('hidden-page');
-                tabRetrait.className = "flex flex-col items-center gap-1 text-xs font-bold transition-all active-tab w-1/2 py-2";
-                tabFlux.className = "flex flex-col items-center gap-1 text-xs font-bold text-gray-500 transition-all w-1/2 py-2";
+                tabRetrait.classList.add('active-tab');
+                tabFlux.classList.remove('active-tab');
             }
         }
 
-        // Script d'arrière-plan différé pour libérer le thread principal
+        // Tâches asynchrones de fond (Suppression complète du Total Blocking Time)
         window.addEventListener('load', function() {
-            var lazyAssetsExecuted = false;
-            function initLazyAssets() {
-                if (lazyAssetsExecuted) return;
-                lazyAssetsExecuted = true;
+            var lazyExecuted = false;
+            function loadLazyDependencies() {
+                if (lazyExecuted) return;
+                lazyExecuted = true;
 
-                // Téléchargement à la demande de Canvas Confetti uniquement lors des actions
+                // Chargement différé du script d'animation confetti
                 var script = document.createElement('script');
                 script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
                 script.defer = true;
                 document.head.appendChild(script);
 
-                // Initialisation des analytics en tâche de fond
+                // Initialisation silencieuse des modules secondaires Firebase (Analytics)
                 import("https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js").then((m) => {
                     try { m.getAnalytics(); } catch(e){}
                 });
             }
 
-            // S'exécute dès que l'utilisateur bouge ou après 3.5 secondes d'inactivité
-            var fallback = setTimeout(initLazyAssets, 3500);
-            ['touchstart', 'scroll', 'click'].forEach(function(e) {
-                window.addEventListener(e, function() {
-                    clearTimeout(fallback);
-                    initLazyAssets();
+            var idleTimeout = setTimeout(loadLazyDependencies, 3000);
+            ['touchstart', 'scroll', 'click'].forEach(function(evt) {
+                window.addEventListener(evt, function() {
+                    clearTimeout(idleTimeout);
+                    loadLazyDependencies();
                 }, {once: true, passive: true});
             });
         });
