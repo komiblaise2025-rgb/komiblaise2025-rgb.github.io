@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="PubGain - Accomplissez des missions simples, gagnez des points, augmentez votre niveau VIP et demandez des retraits sécurisés en crypto.">
     <title>PubGain - Level & VIP Edition</title>
     
     <link rel="preconnect" href="https://firestore.googleapis.com">
@@ -19,7 +20,6 @@
         }
         .active-tab { color: #2563eb; }
         .hidden-page { display: none; }
-        /* Version ultra-légère des classes critiques de Tailwind */
         .max-w-md { max-w: 28rem; }
         .mx-auto { margin-left: auto; margin-right: auto; }
         .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
@@ -33,12 +33,12 @@
     <header class="bg-blue-600 text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center">
         <div class="flex flex-col">
             <h1 class="text-xl font-bold tracking-wide">PubGain</h1>
-            <span id="user-vip" class="text-[10px] bg-yellow-500 text-gray-900 font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider w-max mt-0.5">VIP Bronze</span>
+            <span id="user-vip" class="text-[11px] bg-amber-500 text-gray-900 font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider w-max mt-0.5">VIP Bronze</span>
         </div>
         <div class="bg-blue-700 px-3 py-1.5 rounded-full flex items-center gap-2 font-semibold shadow-inner">
             <span id="user-points">0</span> 
             <span class="text-yellow-400 text-lg">🪙</span>
-            <span class="text-xs text-blue-200">Pts</span>
+            <span class="text-xs text-blue-100">Pts</span>
         </div>
     </header>
 
@@ -51,12 +51,12 @@
                 <span class="text-sm font-bold text-gray-700 flex items-center gap-1.5">
                     <i class="fa-solid fa-star text-yellow-500"></i> Level <span id="txt-level">1</span>/15
                 </span>
-                <span class="text-xs font-semibold text-gray-400"><span id="txt-xp">0</span> / <span id="txt-next-xp">100</span> XP</span>
+                <span class="text-xs font-semibold text-gray-600"><span id="txt-xp">0</span> / <span id="txt-next-xp">100</span> XP</span>
             </div>
-            <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+            <div class="w-full bg-gray-200 h-2.5 rounded-full overflow-hidden">
                 <div id="xp-bar" class="bg-gradient-to-r from-yellow-400 to-orange-500 h-full w-[0%] transition-all duration-500"></div>
             </div>
-            <p class="text-[11px] text-gray-400 text-center italic">Each completed task grants +10 XP. Higher levels increase your VIP rank & gains!</p>
+            <p class="text-[11px] text-gray-500 text-center italic">Each completed task grants +10 XP. Higher levels increase your VIP rank & gains!</p>
         </div>
 
         <section id="page-flux" class="space-y-4">
@@ -68,10 +68,10 @@
                         </div>
                         <div>
                             <h3 class="font-bold text-gray-800">Premium Video Task</h3>
-                            <p class="text-xs text-gray-400">Sponsored • Realtime Reward</p>
+                            <p class="text-xs text-gray-500">Sponsored • Realtime Reward</p>
                         </div>
                     </div>
-                    <span id="reward-badge" class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-lg">+15 Pts</span>
+                    <span id="reward-badge" class="bg-green-100 text-green-800 text-xs font-bold px-2.5 py-1 rounded-lg">+15 Pts</span>
                 </div>
                 
                 <p class="text-gray-600 text-sm mb-4 leading-relaxed">Click the button below to visit our sponsor's link. Stay active on their webpage for 10 seconds to claim your points and XP.</p>
@@ -96,7 +96,7 @@
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="bg-white/5 p-2 rounded-lg border border-white/10">
                         <p class="font-bold text-amber-500">🥉 Bronze (Lv. 1-3)</p>
-                        <p class="text-[10px] text-gray-400">Base Earnings (15 Pts)</p>
+                        <p class="text-[10px] text-gray-300">Base Earnings (15 Pts)</p>
                     </div>
                     <div class="bg-white/5 p-2 rounded-lg border border-white/10">
                         <p class="font-bold text-slate-300">🥈 Silver (Lv. 4-7)</p>
@@ -130,7 +130,7 @@
 
                     <div>
                         <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Crypto Wallet Address</label>
-                        <input id="withdraw-address" type="text" placeholder="Paste your secure wallet address address" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm focus:outline-none focus:border-blue-500" required>
+                        <input id="withdraw-address" type="text" placeholder="Paste your secure wallet address" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm focus:outline-none focus:border-blue-500" required>
                     </div>
 
                     <div>
@@ -154,7 +154,7 @@
                 <i class="fa-solid fa-mobile-screen-button text-xl"></i>
                 <span>Tasks</span>
             </button>
-            <button onclick="switchTab('retrait')" id="tab-retrait" class="flex flex-col items-center gap-1 text-xs font-bold text-gray-400 transition-all w-1/2 py-2">
+            <button onclick="switchTab('retrait')" id="tab-retrait" class="flex flex-col items-center gap-1 text-xs font-bold text-gray-500 transition-all w-1/2 py-2">
                 <i class="fa-solid fa-briefcase text-xl"></i>
                 <span>Withdrawal</span>
             </button>
@@ -179,8 +179,8 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         
-        // Chargement intelligent des Analytics en arrière-plan
-        setTimeout(() => { getAnalytics(app); }, 3500);
+        // Délai sur Analytics pour ne pas bloquer le fil d'exécution au démarrage
+        setTimeout(() => { getAnalytics(app); }, 3800);
 
         const userId = "user_demo_123";
         const userRef = doc(db, "users", userId);
@@ -203,14 +203,14 @@
                 }
                 updateDashboardUI();
             } catch (err) {
-                console.error("Firebase fetch error:", err);
+                console.error("Firebase load error:", err);
             }
         }
 
         function updateDashboardUI() {
             const nextLevelXpNeeded = currentLevel * xpPerLevelBase;
             let vipName = "VIP Bronze";
-            let vipColorClass = ["bg-amber-600", "text-white"];
+            let vipColorClass = ["bg-amber-500", "text-gray-900"];
             let baseReward = 15;
             let finalReward = baseReward;
 
@@ -238,7 +238,7 @@
 
             const vipBadge = document.getElementById('user-vip');
             vipBadge.innerText = vipName;
-            vipBadge.className = `text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider w-max mt-0.5 ${vipColorClass[0]} ${vipColorClass[1]}`;
+            vipBadge.className = `text-[11px] font-extrabold px-2.5 py-0.5 rounded-full uppercase tracking-wider w-max mt-0.5 ${vipColorClass[0]} ${vipColorClass[1]}`;
             document.getElementById('reward-badge').innerText = `+${finalReward} Pts`;
         }
 
@@ -298,7 +298,6 @@
                         await updateDoc(userRef, { points: currentPoints, xp: currentXp, level: currentLevel });
                         updateDashboardUI();
                         
-                        // Déclencheur Confetti optimisé (si disponible)
                         if (typeof confetti === 'function') {
                             if (levelUpOccurred) {
                                 showToast(`🎉 LEVEL UP! You reached Level ${currentLevel}!`);
@@ -358,33 +357,33 @@
                 fluxPage.classList.remove('hidden-page');
                 retraitPage.classList.add('hidden-page');
                 tabFlux.classList.add('active-tab');
-                tabRetrait.className = "flex flex-col items-center gap-1 text-xs font-bold text-gray-400 transition-all w-1/2 py-2";
+                tabRetrait.className = "flex flex-col items-center gap-1 text-xs font-bold text-gray-500 transition-all w-1/2 py-2";
             } else {
                 fluxPage.classList.add('hidden-page');
                 retraitPage.classList.remove('hidden-page');
                 tabRetrait.classList.add('active-tab');
-                tabFlux.className = "flex flex-col items-center gap-1 text-xs font-bold text-gray-400 transition-all w-1/2 py-2";
+                tabFlux.className = "flex flex-col items-center gap-1 text-xs font-bold text-gray-500 transition-all w-1/2 py-2";
             }
         }
 
-        // Chargement intelligent des scripts tiers lourds (Confetti + Google Analytics global) après le premier geste de l'utilisateur
+        // Stratégie d'optimisation : Charge les dépendances non-essentielles au premier clic ou après 4s d'inactivité
         window.addEventListener('load', function() {
-            var scriptLoaded = false;
-            function loadHeavyScripts() {
-                if (scriptLoaded) return;
-                scriptLoaded = true;
+            var scriptsLoaded = false;
+            function deferLoad() {
+                if (scriptsLoaded) return;
+                scriptsLoaded = true;
 
-                // 1. Confetti Script
-                var confettiScript = document.createElement('script');
-                confettiScript.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
-                confettiScript.defer = true;
-                document.head.appendChild(confettiScript);
+                // 1. Script d'animation Confetti (Chargé à la demande)
+                var conf = document.createElement('script');
+                conf.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
+                conf.defer = true;
+                document.head.appendChild(conf);
 
-                // 2. Google Analytics Script Global
-                var gaScript = document.createElement('script');
-                gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-1N3RNVHSCD";
-                gaScript.async = true;
-                document.head.appendChild(gaScript);
+                // 2. Script Google Analytics Global
+                var ga = document.createElement('script');
+                ga.src = "https://www.googletagmanager.com/gtag/js?id=G-1N3RNVHSCD";
+                ga.async = true;
+                document.head.appendChild(ga);
 
                 window.dataLayer = window.dataLayer || [];
                 function gtag(){dataLayer.push(arguments);}
@@ -392,10 +391,9 @@
                 gtag('config', 'G-1N3RNVHSCD', { 'anonymize_ip': true });
             }
 
-            // Déclencheur après 3,5s d'inactivité OU au premier toucher/défilement tactile
-            setTimeout(loadHeavyScripts, 3500);
+            setTimeout(deferLoad, 4000);
             ['touchstart', 'scroll', 'click'].forEach(function(evt) {
-                window.addEventListener(evt, loadHeavyScripts, {once: true, passive: true});
+                window.addEventListener(evt, deferLoad, {once: true, passive: true});
             });
         });
     </script>
