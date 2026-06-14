@@ -1,25 +1,22 @@
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="fr" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="PubGain - Accomplissez des missions simples, gagnez des points, augmentez votre niveau VIP et demandez des retraits sécurisés en crypto.">
     <title>PubGain - Level & VIP Edition</title>
     
-    <!-- Préconnexions prioritaires -->
     <link rel="preconnect" href="https://firestore.googleapis.com">
     <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
     <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
 
-    <!-- Feuille d'icônes asynchrone non-bloquante -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
           media="print" onload="this.media='all'; this.onload=null;">
     
-    <!-- CSS Critique Embarqué : Élimine 100% du CLS et fixe la mise en page initiale -->
     <style>
         body {
             -webkit-tap-highlight-color: transparent;
-            font-family: 'Segoe UI', system-ui, Roboto, Helvetica, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, Roboto, Helvetica, Arial, sans-serif;
             background-color: #f3f4f6;
             margin: 0;
             padding-bottom: 6rem;
@@ -30,10 +27,8 @@
         .active-tab { color: #2563eb !important; }
         .hidden-page { display: none !important; }
         
-        /* Propriétés structurelles critiques injectées en amont pour bloquer le layout shift */
         main {
             display: block;
-            max-w: 28rem; /* Equivalent max-w-md */
             max-width: 28rem;
             margin-left: auto;
             margin-right: auto;
@@ -59,14 +54,13 @@
         .rounded-full { border-radius: 9999px; }
         .overflow-hidden { overflow: hidden; }
         .bg-gray-200 { background-color: #e5e7eb; }
+        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); border-width: 0; }
     </style>
 
-    <!-- Chargement différé du framework pour la colorisation avancée -->
     <script src="https://cdn.tailwindcss.com" defer></script>
 </head>
 <body class="bg-gray-100 font-sans">
 
-    <!-- BARRE D'EN-TÊTE PRINCIPALE (H1) -->
     <header class="bg-blue-600 text-white p-4 sticky top-0 z-50 shadow-md flex justify-between items-center">
         <div class="flex flex-col">
             <h1 class="text-xl font-bold tracking-wide">PubGain</h1>
@@ -79,17 +73,14 @@
         </div>
     </header>
 
-    <!-- NOTIFICATION POPUP TOAST -->
     <div id="toast" class="fixed top-20 left-1/2 transform -translate-x-1/2 z-50 bg-gray-800 text-white px-4 py-2 rounded-xl text-sm font-medium shadow-lg transition-opacity duration-300 opacity-0 pointer-events-none text-center min-w-[250px]"></div>
 
-    <!-- ZONE DE CONTENU PRINCIPALE (Mise en page fixée par CSS natif) -->
     <main class="main-space">
         
-        <!-- TABLEAU DE BORD DU NIVEAU UTILISATEUR -->
         <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
             <div class="flex justify-between items-center mb-3">
                 <span class="text-sm font-bold text-gray-700 flex items-center gap-1.5">
-                    <i class="fa-solid fa-star text-yellow-500"></i> Level <span id="txt-level">1</span>/15
+                    <i class="fa-solid fa-star text-yellow-500" aria-hidden="true"></i> Level <span id="txt-level">1</span>/15
                 </span>
                 <span class="text-xs font-semibold text-gray-600"><span id="txt-xp">0</span> / <span id="txt-next-xp">100</span> XP</span>
             </div>
@@ -99,20 +90,16 @@
             <p class="text-[11px] text-gray-500 text-center italic mt-2">Each completed task grants +10 XP. Higher levels increase your VIP rank & gains!</p>
         </div>
 
-        <!-- ONGLET 1: FLUX DE MISSIONS -->
         <section id="page-flux" class="main-space">
-            
-            <!-- Correction Accessibilité : Ajout d'un titre H2 masqué ou visible pour respecter l'ordre sémantique -->
-            <h2 class="sr-only text-lg font-bold text-gray-800 mb-1">Missions Disponibles</h2>
+            <h2 class="sr-only">Missions et Tâches Récompensées</h2>
 
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
                 <div class="flex items-center justify-between mb-3">
                     <div class="flex items-center gap-3">
                         <div class="bg-blue-100 p-2.5 rounded-xl text-blue-600">
-                            <i class="fa-solid fa-bolt text-xl"></i>
+                            <i class="fa-solid fa-bolt text-xl" aria-hidden="true"></i>
                         </div>
                         <div>
-                            <!-- Titre H3 maintenant conforme car précédé par un H2 -->
                             <h3 class="font-bold text-gray-800">Premium Video Task</h3>
                             <p class="text-xs text-gray-500">Sponsored • Realtime Reward</p>
                         </div>
@@ -135,10 +122,9 @@
                 </div>
             </div>
 
-            <!-- TABLEAU DES GRADES VIP -->
             <div class="bg-gradient-to-br from-gray-900 to-slate-800 p-5 rounded-2xl text-white shadow-md space-y-3">
                 <h4 class="font-bold text-sm tracking-wide text-yellow-400 uppercase flex items-center gap-1.5">
-                    <i class="fa-solid fa-crown"></i> VIP Status & Bonuses List
+                    <i class="fa-solid fa-crown" aria-hidden="true"></i> VIP Status & Bonuses List
                 </h4>
                 <div class="grid grid-cols-2 gap-2 text-xs">
                     <div class="bg-white/5 p-2 rounded-lg border border-white/10">
@@ -161,7 +147,6 @@
             </div>
         </section>
 
-        <!-- ONGLET 2: RETRAITS -->
         <section id="page-retrait" class="hidden-page main-space">
             <h2 class="text-lg font-bold text-gray-800 mb-1">Request Withdrawal</h2>
             <div class="bg-white p-5 rounded-2xl shadow-sm border border-gray-100">
@@ -169,7 +154,7 @@
                 
                 <form id="form-withdrawal" class="space-y-4">
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Payment Network</label>
+                        <label for="withdraw-method" class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Payment Network</label>
                         <select id="withdraw-method" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm font-medium text-gray-700 focus:outline-none">
                             <option value="USDT_TRC20">USDT (TRC20) - Fast Crypto</option>
                             <option value="Bitcoin">Bitcoin (BTC)</option>
@@ -177,7 +162,7 @@
                     </div>
 
                     <div>
-                        <label class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Crypto Wallet Address</label>
+                        <label for="withdraw-address" class="block text-xs font-bold text-gray-600 uppercase mb-1.5">Crypto Wallet Address</label>
                         <input id="withdraw-address" type="text" placeholder="Paste your secure wallet address" class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50 text-sm focus:outline-none" required>
                     </div>
 
@@ -187,7 +172,7 @@
                     </div>
 
                     <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-md transition-all active:scale-[0.98] flex items-center justify-center gap-2 text-base">
-                        <i class="fa-solid fa-wallet"></i>
+                        <i class="fa-solid fa-wallet" aria-hidden="true"></i>
                         <span>Submit Payout Request</span>
                     </button>
                 </form>
@@ -196,21 +181,19 @@
 
     </main>
 
-    <!-- NAVIGATION BASSE -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 shadow-xl z-50">
         <div class="max-w-md mx-auto flex justify-around items-center h-16">
-            <button onclick="switchTab('flux')" id="tab-flux" class="flex flex-col items-center gap-1 text-xs font-bold transition-all active-tab w-1/2 py-2">
-                <i class="fa-solid fa-mobile-screen-button text-xl"></i>
+            <button onclick="switchTab('flux')" id="tab-flux" class="flex flex-col items-center gap-1 text-xs font-bold transition-all active-tab w-1/2 py-2" aria-label="Afficher les tâches disponibles">
+                <i class="fa-solid fa-mobile-screen-button text-xl" aria-hidden="true"></i>
                 <span>Tasks</span>
             </button>
-            <button onclick="switchTab('retrait')" id="tab-retrait" class="flex flex-col items-center gap-1 text-xs font-bold text-gray-500 transition-all w-1/2 py-2">
-                <i class="fa-solid fa-briefcase text-xl"></i>
+            <button onclick="switchTab('retrait')" id="tab-retrait" class="flex flex-col items-center gap-1 text-xs font-bold text-gray-500 transition-all w-1/2 py-2" aria-label="Afficher la page de retrait">
+                <i class="fa-solid fa-briefcase text-xl" aria-hidden="true"></i>
                 <span>Withdrawal</span>
             </button>
         </div>
     </nav>
 
-    <!-- SYSTÈME SCRIPT BACKEND & CONFIGURATION FIREBASE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
@@ -225,7 +208,6 @@
             measurementId: "G-N79FK4MBY2"
         };
 
-        // Initialisation de Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
@@ -250,7 +232,7 @@
                 }
                 updateDashboardUI();
             } catch (err) {
-                console.error("Firebase Database communication failure:", err);
+                console.error("Firebase Connection Error:", err);
             }
         }
 
@@ -393,7 +375,6 @@
         loadUserData();
     </script>
 
-    <!-- ROUTING & OPTIMISATION DU SCRIPT TIERS POUR RÉDUIRE LE TBT -->
     <script>
         function switchTab(tabName) {
             const fluxPage = document.getElementById('page-flux');
@@ -408,13 +389,14 @@
                 tabRetrait.className = "flex flex-col items-center gap-1 text-xs font-bold text-gray-500 transition-all w-1/2 py-2";
             } else {
                 fluxPage.classList.add('hidden-page');
+                retraitPage.className = "main-space";
                 retraitPage.classList.remove('hidden-page');
                 tabRetrait.classList.add('active-tab');
                 tabFlux.className = "flex flex-col items-center gap-1 text-xs font-bold text-gray-500 transition-all w-1/2 py-2";
             }
         }
 
-        // Chargement ultra-tardif (Lazy Loading) des trackers et effets visuels secondaires pour libérer le processeur
+        // Stratégie Lazy loading totale pour éliminer le TBT (Total Blocking Time)
         window.addEventListener('load', function() {
             var lazyAssetsExecuted = false;
             function loadLazyAssets() {
@@ -427,15 +409,12 @@
                 cScript.defer = true;
                 document.head.appendChild(cScript);
 
-                // Firebase Analytics - Retardé pour éviter de bloquer le CPU au chargement initial
+                // Firebase Analytics asynchrone pour ne pas bloquer Lighthouse au démarrage
                 import("https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js").then((mod) => {
-                    try {
-                        mod.getAnalytics();
-                    } catch(e) {}
+                    try { mod.getAnalytics(); } catch(e) {}
                 });
             }
 
-            // Déclenchement au bout de 4 secondes d'inactivité ou dès le premier mouvement de l'utilisateur
             var fallbackTimeout = setTimeout(loadLazyAssets, 4000);
             ['touchstart', 'scroll', 'click'].forEach(function(evt) {
                 window.addEventListener(evt, function() {
