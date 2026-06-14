@@ -1,24 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="fr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PubGain - Level & VIP Edition</title>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <link rel="preconnect" href="https://firestore.googleapis.com">
+    <link rel="preconnect" href="https://www.gstatic.com">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
+          media="print" onload="this.media='all'; this.onload=null;">
+    
     <style>
         body {
             -webkit-tap-highlight-color: transparent;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f3f4f6;
         }
-        .active-tab {
-            color: #2563eb;
-        }
-        .hidden-page {
-            display: none;
-        }
+        .active-tab { color: #2563eb; }
+        .hidden-page { display: none; }
+        /* Version ultra-légère des classes critiques de Tailwind */
+        .max-w-md { max-w: 28rem; }
+        .mx-auto { margin-left: auto; margin-right: auto; }
+        .shadow-md { box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1); }
+        .rounded-2xl { border-radius: 1rem; }
     </style>
+
+    <script src="https://cdn.tailwindcss.com" defer></script>
 </head>
 <body class="bg-gray-100 font-sans min-h-screen pb-24 select-none">
 
@@ -154,12 +162,10 @@
     </nav>
 
     <script type="module">
-        // Mise à jour vers la version 12.14.0 demandée par votre console Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, increment, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
         import { getAnalytics } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js";
 
-        // Vos nouveaux identifiants Firebase (Projet: pubgain-e6fa6)
         const firebaseConfig = {
             apiKey: "AIzaSyASWK7KW6Fl6p5GgnIO-Q4snXP_jV0_vpg",
             authDomain: "pubgain-e6fa6.firebaseapp.com",
@@ -170,21 +176,20 @@
             measurementId: "G-N79FK4MBY2"
         };
 
-        // Initialisation de Firebase
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        const analytics = getAnalytics(app);
+        
+        // Chargement intelligent des Analytics en arrière-plan
+        setTimeout(() => { getAnalytics(app); }, 3500);
 
         const userId = "user_demo_123";
         const userRef = doc(db, "users", userId);
 
-        // Core App Variables
         let currentPoints = 0;
         let currentLevel = 1;
         let currentXp = 0;
-        const xpPerLevelBase = 100; // Each level requires Level * 100 XP to rank up
+        const xpPerLevelBase = 100;
 
-        // Load or initiate User Record
         async function loadUserData() {
             try {
                 const userSnap = await getDoc(userRef);
@@ -194,11 +199,7 @@
                     currentLevel = data.level || 1;
                     currentXp = data.xp || 0;
                 } else {
-                    // Create default fields for New Profile
                     await setDoc(userRef, { points: 0, level: 1, xp: 0 });
-                    currentPoints = 0;
-                    currentLevel = 1;
-                    currentXp = 0;
                 }
                 updateDashboardUI();
             } catch (err) {
@@ -206,11 +207,8 @@
             }
         }
 
-        // Dynamically compute Level Requirements, VIP Status Tier, and Update Visual elements
         function updateDashboardUI() {
             const nextLevelXpNeeded = currentLevel * xpPerLevelBase;
-            
-            // Determine VIP rank & multiplier
             let vipName = "VIP Bronze";
             let vipColorClass = ["bg-amber-600", "text-white"];
             let baseReward = 15;
@@ -230,21 +228,17 @@
                 finalReward = Math.round(baseReward * 1.5);
             }
 
-            // Apply Text and values to GUI Elements
             document.getElementById('user-points').innerText = currentPoints;
             document.getElementById('txt-level').innerText = currentLevel;
             document.getElementById('txt-xp').innerText = currentXp;
             document.getElementById('txt-next-xp').innerText = nextLevelXpNeeded;
             
-            // Progress Fill calculation
             const percentage = (currentXp / nextLevelXpNeeded) * 100;
             document.getElementById('xp-bar').style.width = `${Math.min(percentage, 100)}%`;
 
-            // Badge Updates
             const vipBadge = document.getElementById('user-vip');
             vipBadge.innerText = vipName;
             vipBadge.className = `text-[10px] font-extrabold px-2 py-0.5 rounded-full uppercase tracking-wider w-max mt-0.5 ${vipColorClass[0]} ${vipColorClass[1]}`;
-            
             document.getElementById('reward-badge').innerText = `+${finalReward} Pts`;
         }
 
@@ -252,12 +246,9 @@
             const toast = document.getElementById('toast');
             toast.innerText = text;
             toast.classList.remove('opacity-0', 'pointer-events-none');
-            setTimeout(() => {
-                toast.classList.add('opacity-0', 'pointer-events-none');
-            }, 2500);
+            setTimeout(() => { toast.classList.add('opacity-0', 'pointer-events-none'); }, 2500);
         }
 
-        // Action Trigger for Ads Click automation loop
         const btnTask = document.getElementById('btn-task');
         const timerBox = document.getElementById('timer-box');
         const timerCount = document.getElementById('timer-count');
@@ -268,7 +259,6 @@
             if (isRunning) return;
             isRunning = true;
             
-            // Target Smartlink launch
             window.open('https://landslidegraphsystems.com/xfm6wh1g?key=02d9c6083bf9c5d2ce191a4137681d41', '_blank');
 
             btnTask.disabled = true;
@@ -287,19 +277,14 @@
                 if (timeLeft <= 0) {
                     clearInterval(interval);
                     
-                    // Award Calculation logic based on level tier
                     let pointsToGrant = 15;
                     if (currentLevel >= 4 && currentLevel <= 7) pointsToGrant = Math.round(15 * 1.1);
                     else if (currentLevel >= 8 && currentLevel <= 11) pointsToGrant = Math.round(15 * 1.25);
                     else if (currentLevel >= 12) pointsToGrant = Math.round(15 * 1.5);
 
-                    let xpToGrant = 10;
-                    
-                    // Increment Local state tracking
                     currentPoints += pointsToGrant;
-                    currentXp += xpToGrant;
+                    currentXp += 10;
 
-                    // Level Up Verification checks (Up to maximum capability limit of 15 levels)
                     let levelUpOccurred = false;
                     let nextLevelRequiredXp = currentLevel * xpPerLevelBase;
                     
@@ -310,28 +295,23 @@
                     }
 
                     try {
-                        // Persist progress directly to Firestore cloud dataset
-                        await updateDoc(userRef, {
-                            points: currentPoints,
-                            xp: currentXp,
-                            level: currentLevel
-                        });
-                        
+                        await updateDoc(userRef, { points: currentPoints, xp: currentXp, level: currentLevel });
                         updateDashboardUI();
                         
-                        if (levelUpOccurred) {
-                            showToast(`🎉 LEVEL UP! You reached Level ${currentLevel}!`);
-                            confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
-                        } else {
-                            showToast(`Task verified! +${pointsToGrant} 🪙 and +10 XP added.`);
-                            confetti({ particleCount: 60, spread: 40, origin: { y: 0.8 } });
+                        // Déclencheur Confetti optimisé (si disponible)
+                        if (typeof confetti === 'function') {
+                            if (levelUpOccurred) {
+                                showToast(`🎉 LEVEL UP! You reached Level ${currentLevel}!`);
+                                confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+                            } else {
+                                showToast(`Task verified! +${pointsToGrant} 🪙 and +10 XP added.`);
+                                confetti({ particleCount: 60, spread: 40, origin: { y: 0.8 } });
+                            }
                         }
                     } catch (e) {
                         showToast("Network save sync delay occurred.");
-                        console.error(e);
                     }
 
-                    // Reset interface states for user interaction loops
                     isRunning = false;
                     btnTask.disabled = false;
                     btnTask.classList.remove('opacity-50');
@@ -340,55 +320,34 @@
             }, 1000);
         });
 
-        // Safe Request submission mapping
         document.getElementById('form-withdrawal').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const method = document.getElementById('withdraw-method').value;
             const address = document.getElementById('withdraw-address').value;
             const amount = parseInt(document.getElementById('withdraw-amount').value);
 
-            if (amount > currentPoints) {
-                showToast("Insufficient point balances!");
-                return;
-            }
-            if (amount < 1000) {
-                showToast("Minimum allowed withdrawal is 1,000 points.");
-                return;
-            }
+            if (amount > currentPoints) { showToast("Insufficient point balances!"); return; }
+            if (amount < 1000) { showToast("Minimum allowed withdrawal is 1,000 points."); return; }
 
             try {
-                // Post logs to Database queue
                 await addDoc(collection(db, "withdrawals"), {
-                    userId: userId,
-                    method: method,
-                    walletAddress: address,
-                    pointsAmount: amount,
-                    status: "Pending review",
-                    timestamp: serverTimestamp()
+                    userId: userId, method: method, walletAddress: address,
+                    pointsAmount: amount, status: "Pending review", timestamp: serverTimestamp()
                 });
-
-                // Deduct balances safely 
                 currentPoints -= amount;
-                await updateDoc(userRef, {
-                    points: currentPoints
-                });
-
+                await updateDoc(userRef, { points: currentPoints });
                 updateDashboardUI();
                 showToast("Payout request submitted successfully!");
                 document.getElementById('form-withdrawal').reset();
             } catch (err) {
                 showToast("Error processing withdrawal pipeline.");
-                console.error(err);
             }
         });
 
-        // Initialize App Session Data on component mount
         loadUserData();
     </script>
 
     <script>
-        // Simple View routing controller
         function switchTab(tabName) {
             const fluxPage = document.getElementById('page-flux');
             const retraitPage = document.getElementById('page-retrait');
@@ -399,46 +358,46 @@
                 fluxPage.classList.remove('hidden-page');
                 retraitPage.classList.add('hidden-page');
                 tabFlux.classList.add('active-tab');
-                tabRetrait.classList.remove('active-tab');
-                tabRetrait.classList.add('text-gray-400');
+                tabRetrait.className = "flex flex-col items-center gap-1 text-xs font-bold text-gray-400 transition-all w-1/2 py-2";
             } else {
                 fluxPage.classList.add('hidden-page');
                 retraitPage.classList.remove('hidden-page');
                 tabRetrait.classList.add('active-tab');
-                tabRetrait.classList.remove('text-gray-400');
-                tabFlux.classList.remove('active-tab');
-                tabFlux.classList.add('text-gray-400');
+                tabFlux.className = "flex flex-col items-center gap-1 text-xs font-bold text-gray-400 transition-all w-1/2 py-2";
             }
         }
+
+        // Chargement intelligent des scripts tiers lourds (Confetti + Google Analytics global) après le premier geste de l'utilisateur
+        window.addEventListener('load', function() {
+            var scriptLoaded = false;
+            function loadHeavyScripts() {
+                if (scriptLoaded) return;
+                scriptLoaded = true;
+
+                // 1. Confetti Script
+                var confettiScript = document.createElement('script');
+                confettiScript.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
+                confettiScript.defer = true;
+                document.head.appendChild(confettiScript);
+
+                // 2. Google Analytics Script Global
+                var gaScript = document.createElement('script');
+                gaScript.src = "https://www.googletagmanager.com/gtag/js?id=G-1N3RNVHSCD";
+                gaScript.async = true;
+                document.head.appendChild(gaScript);
+
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-1N3RNVHSCD', { 'anonymize_ip': true });
+            }
+
+            // Déclencheur après 3,5s d'inactivité OU au premier toucher/défilement tactile
+            setTimeout(loadHeavyScripts, 3500);
+            ['touchstart', 'scroll', 'click'].forEach(function(evt) {
+                window.addEventListener(evt, loadHeavyScripts, {once: true, passive: true});
+            });
+        });
     </script>
-    <script>
-// <![CDATA[
-  window.addEventListener('load', function() {
-    var gaLoaded = false;
-    function loadGA() {
-      if (gaLoaded) return;
-      gaLoaded = true;
-      
-      // Chargement asynchrone du script lourd
-      var script = document.createElement('script');
-      script.async = true;
-      script.src = "https://www.googletagmanager.com/gtag/js?id=G-1N3RNVHSCD";
-      document.head.appendChild(script);
-
-      // Initialisation de Google Analytics
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-1N3RNVHSCD', { 'anonymize_ip': true }); // Optionnel : pour la confidentialité
-    }
-
-    // Déclencheurs : charge après 4 secondes d'inactivité OU au premier mouvement
-    var idleTimeout = setTimeout(loadGA, 4000);
-    ['scroll', 'mousemove', 'touchstart', 'click'].forEach(function(evt) {
-      window.addEventListener(evt, loadGA, {once: true, passive: true});
-    });
-  });
-// ]]>
-</script>
 </body>
 </html>
