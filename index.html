@@ -1,495 +1,387 @@
 <!DOCTYPE html>
-<html lang="fr" dir="ltr">
+<html lang="fr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="PubGain - Accomplissez des missions simples, gagnez des points et augmentez votre niveau VIP.">
-    <title>PubGain - Production Pure Edition</title>
-    
-    <link rel="preconnect" href="https://firestore.googleapis.com">
-    <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  
+<meta charset="UTF-8">
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" 
-          media="print" onload="this.media='all'; this.onload=null;">
-    
-    <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            -webkit-tap-highlight-color: transparent;
-            font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #f3f4f6;
-            color: #1f2937;
-            padding-bottom: 5rem;
-            min-height: 100vh;
-        }
-        header {
-            background-color: #2563eb;
-            color: #ffffff;
-            padding: 1rem;
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            display: flex;
-            justify-between: space-between;
-            align-items: center;
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-        }
-        .header-container { display: flex; flex-direction: column; }
-        .header-title { font-size: 1.25rem; font-weight: 700; letter-spacing: 0.025em; }
-        
-        #user-vip {
-            font-size: 11px;
-            font-weight: 800;
-            padding: 0.125rem 0.625rem;
-            border-radius: 9999px;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-top: 0.125rem;
-            width: max-content;
-        }
-        .vip-bronze { background-color: #f59e0b; color: #111827; }
-        .vip-silver { background-color: #cbd5e1; color: #111827; }
-        .vip-gold { background-color: #facc15; color: #111827; }
-        .vip-diamond { background-color: #22d3ee; color: #111827; }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+<meta name="google-site-verification" content="qntZ7VE1mxT6OzqNoxDEtp1hX3j-KO5gJ06pjYCk93o" />
+  
+<meta name="ab137a59a8640925f447310616cc8fca398982e9" content="ab137a59a8640925f447310616cc8fca398982e9" />
+  
+  <meta name="referrer" content="no-referrer-when-downgrade" />
+  
+<title>Technologies et Innovations | Outils IA & Performance Web</title>
 
-        .points-display {
-            background-color: #1d4ed8;
-            padding: 0.375rem 0.75rem;
-            border-radius: 9999px;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-        }
-        .points-display .pts-lbl { font-size: 0.75rem; color: #dbeafe; }
-        
-        #toast {
-            position: fixed; top: 5rem; left: 50%; transform: translateX(-50%);
-            z-index: 50; background-color: #1f2937; color: #ffffff;
-            padding: 0.5rem 1rem; border-radius: 0.75rem; font-size: 0.875rem;
-            font-weight: 500; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
-            transition: opacity 0.3s; opacity: 0; pointer-events: none;
-            text-align: center; min-width: 250px;
-        }
-        
-        main { display: flex; flex-direction: column; gap: 1rem; max-width: 28rem; margin: 0 auto; padding: 1rem; }
-        
-        .card { background-color: #ffffff; border-radius: 1rem; padding: 1rem; border: 1px solid #f3f4f6; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .flex-between { display: flex; justify-content: space-between; align-items: center; }
-        
-        .lvl-text { font-size: 0.875rem; font-weight: 700; color: #374151; display: flex; align-items: center; gap: 0.375rem; }
-        .xp-text { font-size: 0.75rem; font-semibold: 600; color: #4b5563; }
-        .progress-container { width: 100%; background-color: #e5e7eb; height: 0.625rem; border-radius: 9999px; overflow: hidden; margin-top: 0.75rem; }
-        #xp-bar { background: linear-gradient(to right, #facc15, #f97316); height: 100%; width: 0%; transition: all 0.5s; }
-        .card-tip { font-size: 11px; color: #6b7280; text-align: center; font-style: italic; margin-top: 0.5rem; }
-        
-        .task-header { display: flex; align-items: center; gap: 0.75rem; }
-        .task-icon-box { background-color: #dbeafe; padding: 0.625rem; border-radius: 0.75rem; color: #2563eb; }
-        .task-title { font-weight: 700; color: #1f2937; font-size: 1rem; }
-        .task-subtitle { font-size: 0.75rem; color: #6b7280; }
-        #reward-badge { background-color: #dcfce7; color: #166534; font-size: 0.75rem; font-weight: 700; padding: 0.25rem 0.625rem; border-radius: 0.5rem; }
-        .task-desc { color: #4b5563; font-size: 0.875rem; margin: 1rem 0; line-height: 1.5; }
-        
-        .btn {
-            width: 100%; border: none; font-weight: 700; padding: 0.875rem 1rem; border-radius: 0.75rem;
-            cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.5rem; font-size: 1rem;
-        }
-        .btn-blue { background-color: #2563eb; color: #ffffff; box-shadow: 0 4px 6px -1px rgba(37,99,235,0.2); }
-        .btn-blue:active { transform: scale(0.98); }
-        .btn-green { background-color: #16a34a; color: #ffffff; box-shadow: 0 4px 6px -1px rgba(22,163,74,0.2); }
-        .btn-green:active { transform: scale(0.98); }
-        
-        #timer-box { margin-top: 0.75rem; text-align: center; background-color: #f9fafb; padding: 0.75rem; border-radius: 0.75rem; border: 1px solid #e5e7eb; }
-        .timer-txt { font-size: 0.875rem; font-weight: 600; color: #4b5563; }
-        #timer-count { color: #2563eb; font-size: 1.125rem; font-weight: 700; }
-        .inner-progress { width: 100%; background-color: #e5e7eb; height: 0.5rem; border-radius: 9999px; margin-top: 0.5rem; overflow: hidden; }
-        #progress-bar { background-color: #2563eb; height: 100%; width: 100%; transition: all 1s linear; }
-        
-        .vip-list-card { background: linear-gradient(to bottom right, #111827, #1e293b); color: #ffffff; }
-        .vip-list-title { font-weight: 700; font-size: 0.875rem; color: #facc15; text-transform: uppercase; display: flex; align-items: center; gap: 0.375rem; margin-bottom: 0.75rem; }
-        .vip-grid { display: grid; grid-template-cols: repeat(2, minmax(0, 1fr)); gap: 0.5rem; }
-        .vip-item { background-color: rgba(255,255,255,0.05); padding: 0.5rem; border-radius: 0.5rem; border: 1px solid rgba(255,255,255,0.1); font-size: 0.75rem; }
-        .vip-item-title { font-weight: 700; }
-        .vip-item-sub { font-size: 10px; color: #cbd5e1; margin-top: 0.125rem; }
-        
-        .form-group { margin-bottom: 1rem; }
-        .form-label { display: block; font-size: 0.75rem; font-weight: 700; color: #4b5563; text-transform: uppercase; margin-bottom: 0.375rem; }
-        .form-control { width: 100%; border: 1px solid #d1d5db; border-radius: 0.75rem; padding: 0.75rem; background-color: #f9fafb; font-size: 0.875rem; color: #374151; outline: none; }
-        .form-control:focus { border-color: #2563eb; }
-        
-        nav { position: fixed; bottom: 0; left: 0; right: 0; background-color: #ffffff; border-top: 1px solid #e5e7eb; shadow: 0 -4px 6px -1px rgba(0,0,0,0.05); z-index: 50; }
-        .nav-container { max-width: 28rem; margin: 0 auto; display: flex; justify-content: space-around; align-items: center; height: 4rem; }
-        .nav-btn { background: none; border: none; width: 50%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.25rem; font-size: 0.75rem; font-weight: 700; color: #6b7280; cursor: pointer; transition: all 0.2s; }
-        
-        .hidden-page { display: none !important; }
-        .active-tab { color: #2563eb !important; }
-        .opacity-50 { opacity: 0.5; pointer-events: none; }
-        .hidden { display: none !important; }
-        .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
-    </style>
+<meta name="description" content="Découvrez les meilleures technologies, outils IA et astuces pour améliorer vos performances web et votre productivité en 2026.">
+
+<meta name="keywords" content="IA, outils IA, technologie, innovation, web, performance, SEO, intelligence artificielle">
+
+<meta name="author" content="Komi Blaise">
+
+<meta name="robots" content="index, follow">
+
+<link rel="canonical" href="https://komiblaise2025-rgb.github.io/">
+
+<!-- Open Graph (Facebook, WhatsApp) -->
+<meta property="og:title" content="Technologies et Innovations">
+<meta property="og:description" content="Les meilleurs outils IA et innovations technologiques en 2026.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://komiblaise2025-rgb.github.io/">
+<meta property="og:image" content="https://komiblaise2025-rgb.github.io/preview.jpg">
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Technologies et Innovations">
+<meta name="twitter:description" content="Découvrez les meilleurs outils IA en 2026.">
+<style>
+:root {
+  --bg-color: #ffffff;
+  --text-color: #1a1a1a;
+  --header-bg: #000000;
+  --accent: #0070f3;
+}
+
+body.dark-mode {
+  --bg-color: #121212;
+  --text-color: #ffffff;
+}
+
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  transition: 0.3s;
+}
+
+header {
+  background: var(--header-bg);
+  color: #fff;
+  padding: 40px 20px;
+  text-align: center;
+  border-bottom: 4px solid var(--accent);
+}
+
+nav {
+  background: #111;
+  padding: 12px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 15px;
+}
+
+nav a {
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+#theme-toggle {
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  cursor: pointer;
+  border-radius: 20px;
+}
+
+main {
+  max-width: 900px;
+  margin: 20px auto;
+  padding: 0 20px;
+}
+
+.ad-spot {
+  background: #eaeaea;
+  border: 1px solid #ccc;
+  margin: 20px 0;
+  padding: 15px;
+  text-align: center;
+  min-height: 100px;
+  color: #333; /* PLUS FONCÉ */
+}
+
+.post-card {
+  border-left: 5px solid var(--accent);
+  padding: 20px;
+  background: #fdfdfd;
+  margin-bottom: 30px;
+}
+
+body.dark-mode .post-card {
+  background: #1e1e1e;
+}
+
+footer {
+  background: #000;
+  color: #fff;
+  text-align: center;
+  padding: 30px;
+  margin-top: 50px;
+}
+  footer {
+  background: #000;
+  color: #fff;
+  text-align: center;
+  padding: 25px 15px;
+}
+
+.footer-links {
+  margin-top: 10px;
+}
+
+.footer-links a {
+  color: #00aaff;
+  text-decoration: none;
+  margin: 0 8px;
+  font-size: 14px;
+}
+
+.footer-links a:hover {
+  text-decoration: underline;
+}
+  .footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+  .post-card a {
+  text-decoration: none;   /* enlève le soulignement */
+  color: #0070f3;          /* BLEU permanent */
+  font-weight: bold;
+}
+
+.post-card a:hover {
+  color: #0056b3;          /* bleu plus foncé au survol */
+}
+</style>
+    
 </head>
+
 <body>
+  
+<header>
+  <h1>Technologies et Innovations</h1>
+  <p>Le futur du web et de la performance.</p>
+</header>
 
-    <header>
-        <div class="header-container">
-            <h1 class="header-title">PubGain</h1>
-            <span id="user-vip" class="vip-bronze">VIP Bronze</span>
-        </div>
-        <div class="points-display">
-            <span id="user-points">0</span> 
-            <span>🪙</span>
-            <span class="pts-lbl">Pts</span>
-        </div>
-    </header>
+<nav>
+  <a href="index.html">Accueil</a>
+  <button id="theme-toggle">Mode Sombre</button>
+</nav>
 
-    <div id="toast"></div>
+<main>
+ 
+  <section>
+    <div class="post-card">
+      <h2><a href="./article1.html">Top 10 outils IA gratuits en 2026</a></h2>
+      <div style="margin-bottom:20px; text-align:center;">
 
-    <main>
+  <img src="./meilleurs-outils-ia-gratuits-2026.webp" 
+       alt="Top 10 outils IA gratuits en 2026" width="590" height="310" fetchpriority="high" decoding="async"
+       style="width:100%; max-width:590px; height:auto; border-radius:10px;">
+      <br><br>
         
-        <div class="card">
-            <div class="flex-between">
-                <span class="lvl-text">
-                    <i class="fa-solid fa-star text-yellow-500" aria-hidden="true"></i> Level <span id="txt-level">1</span>/15
-                </span>
-                <span class="xp-text"><span id="txt-xp">0</span> / <span id="txt-next-xp">100</span> XP</span>
-            </div>
-            <div class="progress-container">
-                <div id="xp-bar"></div>
-            </div>
-            <p class="card-tip">Each completed task grants +10 XP. Higher levels increase your VIP rank & gains!</p>
-        </div>
+      </div>
+      <p>Découvrez les outils d'intelligence artificielle les plus puissants pour booster votre productivité.</p>
+      <a href="./article1.html" style="color:#000000; font-weight:bold;">
+    Lire l’article
+  </a>
+    </div>
+    <div style="border-left:5px solid #0070f3; padding:15px; margin:20px 0;">
 
-        <section id="page-flux">
-            <h2 class="sr-only">Available Tasks Flow</h2>
+  <h2>Top outils IA pour étudiants</h2>
 
-            <div class="card" style="margin-bottom: 1rem;">
-                <div class="flex-between">
-                    <div class="task-header">
-                        <div class="task-icon-box">
-                            <i class="fa-solid fa-bolt" style="font-size:1.25rem;" aria-hidden="true"></i>
-                        </div>
-                        <div>
-                            <h3 class="task-title">Premium Video Task</h3>
-                            <p class="task-subtitle">Sponsored • Realtime Reward</p>
-                        </div>
-                    </div>
-                    <span id="reward-badge">+15 Pts</span>
-                </div>
-                
-                <p class="task-desc">Click the button below to visit our sponsor's link. Stay active on their webpage for 10 seconds to claim your points and XP.</p>
-                
-                <button id="btn-task" class="btn btn-blue">
-                    <span>Visit and Win</span>
-                    <span>🪙</span>
-                </button>
-                
-                <div id="timer-box" class="hidden">
-                    <p class="timer-txt">Watch the sponsor site: <span id="timer-count">10</span>s</p>
-                    <div class="inner-progress">
-                        <div id="progress-bar"></div>
-                    </div>
-                </div>
-            </div>
+  <img src="./outils-ia-etudiants-2026.webp"
+     alt="Top outils IA pour étudiants en 2026" width="590" height="310" fetchpriority="high" decoding="async"
+     style="width:100%; max-width:590px; height:auto; border-radius:10px;">
 
-            <div class="card vip-list-card">
-                <h4 class="vip-list-title">
-                    <i class="fa-solid fa-crown" aria-hidden="true"></i> VIP Status & Bonuses List
-                </h4>
-                <div class="vip-grid">
-                    <div class="vip-item">
-                        <p class="vip-item-title" style="color:#f59e0b;">🥉 Bronze (Lv. 1-3)</p>
-                        <p class="vip-item-sub">Base Earnings (15 Pts)</p>
-                    </div>
-                    <div class="vip-item">
-                        <p class="vip-item-title" style="color:#cbd5e1;">🥈 Silver (Lv. 4-7)</p>
-                        <p class="vip-item-sub" style="color:#4ade80;">+10% Points Bonus</p>
-                    </div>
-                    <div class="vip-item">
-                        <p class="vip-item-title" style="color:#facc15;">🥇 Gold (Lv. 8-11)</p>
-                        <p class="vip-item-sub" style="color:#4ade80;">+25% Points Bonus</p>
-                    </div>
-                    <div class="vip-item">
-                        <p class="vip-item-title" style="color:#22d3ee;">💎 Diamond (Lv. 12-15)</p>
-                        <p class="vip-item-sub" style="color:#4ade80;">+50% Points Bonus</p>
-                    </div>
-                </div>
-            </div>
-        </section>
+  <p>
+  Découvrez les meilleurs outils IA pour étudiants pour améliorer vos notes et gagner du temps.
+  </p>
 
-        <section id="page-retrait" class="hidden-page">
-            <h2 class="task-title" style="margin-bottom:0.25rem;">Request Withdrawal</h2>
-            <div class="card">
-                <p class="task-subtitle" style="margin-bottom:1rem;">Minimum threshold: 1000 Pts = $1 USDT. Orders processed within 24-48 hours.</p>
-                
-                <form id="form-withdrawal">
-                    <div class="form-group">
-                        <label for="withdraw-method" class="form-label">Payment Network</label>
-                        <select id="withdraw-method" class="form-control" style="font-weight:500;">
-                            <option value="USDT_TRC20">USDT (TRC20) - Fast Crypto</option>
-                            <option value="Bitcoin">Bitcoin (BTC)</option>
-                        </select>
-                    </div>
+  <a href="./article2.html" style="color:#000000; font-weight:bold;">
+    Lire l’article
+  </a>
 
-                    <div class="form-group">
-                        <label for="withdraw-address" class="form-label">Crypto Wallet Address</label>
-                        <input id="withdraw-address" type="text" placeholder="Paste your secure wallet address" class="form-control" required>
-                    </div>
+</div>
+    
+    <div style="border-left:5px solid #0070f3; padding:15px; margin:20px 0;">
 
-                    <div class="form-group">
-                        <label for="withdraw-amount" class="form-label">Amount to Withdraw (Points)</label>
-                        <input id="withdraw-amount" type="number" min="1000" placeholder="e.g., 1000" class="form-control" required>
-                    </div>
+<h2>Découvrir les meilleures plateformes de création de site Web gratuit à performance rapide</h2>
 
-                    <button type="submit" class="btn btn-green">
-                        <i class="fa-solid fa-wallet" aria-hidden="true"></i>
-                        <span>Submit Payout Request</span>
-                    </button>
-                </form>
-            </div>
-        </section>
+<img src="./plateformes-creation-site-web.webp"
+     alt="Les meilleures plateformes de création de site Web gratuit" width="590" height="310" fetchpriority="high" decoding="async"
+     style="width:100%; max-width:590px; height:auto; border-radius:10px;">
 
-    </main>
+<p>
+Découvrez les meilleures plateformes de création de site Web gratuit pour créer rapidement un site professionnel moderne, rapide et optimisé SEO sans coder.
+</p>
 
-    <nav>
-        <div class="nav-container">
-            <button onclick="switchTab('flux')" id="tab-flux" class="nav-btn active-tab" aria-label="Tasks Tab">
-                <i class="fa-solid fa-mobile-screen-button" style="font-size:1.25rem;" aria-hidden="true"></i>
-                <span>Tasks</span>
-            </button>
-            <button onclick="switchTab('retrait')" id="tab-retrait" class="nav-btn" aria-label="Withdrawal Tab">
-                <i class="fa-solid fa-briefcase" style="font-size:1.25rem;" aria-hidden="true"></i>
-                <span>Withdrawal</span>
-            </button>
-        </div>
-    </nav>
+<a href="./article3.html"
+   style="color:#000000; font-weight:bold; text-decoration:none;">
+   Lire l'article
+</a>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, updateDoc, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+</div>
+    <div style="border-left:5px solid #0070f3; padding:15px; margin:20px 0;">
+    <h2>Meilleures formations gratuites débutants en création de site Web GitHub et monétisation</h2>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyASWK7KW6Fl6p5GgnIO-Q4snXP_jV0_vpg",
-            authDomain: "pubgain-e6fa6.firebaseapp.com",
-            projectId: "pubgain-e6fa6",
-            storageBucket: "pubgain-e6fa6.firebasestorage.app",
-            messagingSenderId: "797004337170",
-            appId: "1:797004337170:web:698471d1aa91d4b9ebc8cb",
-            measurementId: "G-N79FK4MBY2"
-        };
+<img src="./formation-github-site-web.webp"
+     alt="Formation gratuite création site Web GitHub"
+     width="590"
+     height="310"
+     fetchpriority="high"
+     loading="lazy"
+     decoding="async"
+     style="width:100%; max-width:590px; height:auto; border-radius:10px;">
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
+<p>
+Découvrez les meilleures formations gratuites pour apprendre la création de site Web avec GitHub, HTML, CSS et les meilleures stratégies de monétisation pour gagner de l'argent en ligne.
+</p>
 
-        const userId = "user_demo_123";
-        const userRef = doc(db, "users", userId);
+<a href="./article4.html"
+   style="color:#000000; font-weight:bold; text-decoration:none;">
+   Lire l'article
+</a>
 
-        let currentPoints = 0;
-        let currentLevel = 1;
-        let currentXp = 0;
-        const xpPerLevelBase = 100;
+</div>
+    <div style="border-left:5px solid #0070f3; padding:15px; margin:20px 0;">
 
-        async function loadUserData() {
-            try {
-                const userSnap = await getDoc(userRef);
-                if (userSnap.exists()) {
-                    const data = userSnap.data();
-                    currentPoints = data.points || 0;
-                    currentLevel = data.level || 1;
-                    currentXp = data.xp || 0;
-                } else {
-                    await setDoc(userRef, { points: 0, level: 1, xp: 0 });
-                }
-                updateDashboardUI();
-            } catch (err) {
-                console.error("Firebase localized link down:", err);
-            }
-        }
+<h2>Hidden New TikTok Feature: Powerful Tips to Boost Visibility</h2>
 
-        function updateDashboardUI() {
-            const nextLevelXpNeeded = currentLevel * xpPerLevelBase;
-            let vipName = "VIP Bronze";
-            let vipClass = "vip-bronze";
-            let baseReward = 15;
-            let finalReward = baseReward;
+<img src="./hidden-tiktok-feature.webp"
+     alt="Hidden New TikTok Feature"
+     width="590"
+     height="310"
+     fetchpriority="high"
+     loading="lazy"
+     decoding="async"
+     style="width:100%; max-width:590px; height:auto; border-radius:10px;">
 
-            if (currentLevel >= 4 && currentLevel <= 7) {
-                vipName = "VIP Silver (+10%)";
-                vipClass = "vip-silver";
-                finalReward = Math.round(baseReward * 1.1);
-            } else if (currentLevel >= 8 && currentLevel <= 11) {
-                vipName = "VIP Gold (+25%)";
-                vipClass = "vip-gold";
-                finalReward = Math.round(baseReward * 1.25);
-            } else if (currentLevel >= 12) {
-                vipName = "VIP Diamond (+50%)";
-                vipClass = "vip-diamond";
-                finalReward = Math.round(baseReward * 1.5);
-            }
+<p>
+Discover the hidden new TikTok feature and the most powerful strategies to boost visibility, increase followers, and go viral faster in 2026.
+</p>
 
-            document.getElementById('user-points').innerText = currentPoints;
-            document.getElementById('txt-level').innerText = currentLevel;
-            document.getElementById('txt-xp').innerText = currentXp;
-            document.getElementById('txt-next-xp').innerText = nextLevelXpNeeded;
-            
-            const percentage = (currentXp / nextLevelXpNeeded) * 100;
-            document.getElementById('xp-bar').style.width = `${Math.min(percentage, 100)}%`;
+<a href="./article5.html"
+   style="color:#000000; font-weight:bold; text-decoration:none;">
+   Read the article
+</a>
 
-            const vipBadge = document.getElementById('user-vip');
-            vipBadge.innerText = vipName;
-            vipBadge.className = vipClass;
-            document.getElementById('reward-badge').innerText = `+${finalReward} Pts`;
-        }
+</div>
+ <div style="border-left:5px solid #0070f3; padding:15px; margin:20px 0;">   
+<h2>Comment gagner avec GitHub Pages en 2026</h2>
 
-        function showToast(text) {
-            const toast = document.getElementById('toast');
-            toast.innerText = text;
-            toast.style.opacity = "1";
-            setTimeout(() => { toast.style.opacity = "0"; }, 2500);
-        }
+<img src="./github-pages-money.webp"
+alt="Comment gagner avec GitHub Pages"
+width="590"
+height="310"
+fetchpriority="high"
+loading="lazy"
+decoding="async"
+style="width:100%; max-width:590px; height:auto; border-radius:10px;">
 
-        const btnTask = document.getElementById('btn-task');
-        const timerBox = document.getElementById('timer-box');
-        const timerCount = document.getElementById('timer-count');
-        const progressBar = document.getElementById('progress-bar');
-        let isRunning = false;
+<p>
+Découvrez comment gagner de l'argent avec GitHub Pages grâce au SEO, Google AdSense, TikTok, Pinterest et les meilleures stratégies de monétisation en 2026.
+</p>
 
-        btnTask.addEventListener('click', () => {
-            if (isRunning) return;
-            isRunning = true;
-            
-            window.open('https://landslidegraphsystems.com/xfm6wh1g?key=02d9c6083bf9c5d2ce191a4137681d41', '_blank');
+<a href="./article6.html"
+style="color:#000000; font-weight:bold; text-decoration:none;">
+Lire l'article
+</a>
 
-            btnTask.classList.add('opacity-50');
-            timerBox.classList.remove('hidden');
-            
-            let timeLeft = 10;
-            timerCount.innerText = timeLeft;
-            progressBar.style.width = '100%';
+ </div>
+    
+  </section>
+  
+</main>
+  
+<div class="author-card">
+  <h2>Fondateur & Rédacteur</h2>
+  <p>B.k.BADA</p>
+  <p>Passionné par les nouvelles technologies et l’innovations.</p>
+</div>
+  
+<footer>
+  <p>© 2026 Technologies et Innovations</p>
 
-            const interval = setInterval(async () => {
-                timeLeft--;
-                timerCount.innerText = timeLeft;
-                progressBar.style.width = (timeLeft * 10) + '%';
+  <nav>
+    <a href="about.html">À propos</a>
+    <a href="contact.html">Contact</a>
+    <a href="privacy.html">Politique de confidentialité</a>
+    <a href="terms.html">Conditions d'utilisation</a>
+  </nav>
+</footer>
 
-                if (timeLeft <= 0) {
-                    clearInterval(interval);
-                    
-                    let pointsToGrant = 15;
-                    if (currentLevel >= 4 && currentLevel <= 7) pointsToGrant = Math.round(15 * 1.1);
-                    else if (currentLevel >= 8 && currentLevel <= 11) pointsToGrant = Math.round(15 * 1.25);
-                    else if (currentLevel >= 12) pointsToGrant = Math.round(15 * 1.5);
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("theme-toggle");
 
-                    currentPoints += pointsToGrant;
-                    currentXp += 10;
+  if (!btn) return;
 
-                    let levelUpOccurred = false;
-                    let nextLevelRequiredXp = currentLevel * xpPerLevelBase;
-                    
-                    if (currentXp >= nextLevelRequiredXp && currentLevel < 15) {
-                        currentXp -= nextLevelRequiredXp;
-                        currentLevel += 1;
-                        levelUpOccurred = true;
-                    }
+  // Charger thème sauvegardé
+  if (localStorage.getItem("theme") === "dark") {
+    document.body.classList.add("dark-mode");
+    btn.textContent = "Mode Clair";
+  }
 
-                    try {
-                        await updateDoc(userRef, { points: currentPoints, xp: currentXp, level: currentLevel });
-                        updateDashboardUI();
-                        
-                        if (typeof confetti === 'function') {
-                            if (levelUpOccurred) {
-                                showToast(`🎉 LEVEL UP! Level ${currentLevel}!`);
-                                confetti({ particleCount: 140, spread: 70, origin: { y: 0.6 } });
-                            } else {
-                                showToast(`Task verified! +${pointsToGrant} 🪙.`);
-                                confetti({ particleCount: 50, spread: 40, origin: { y: 0.8 } });
-                            }
-                        }
-                    } catch (e) {
-                        showToast("Local data sync lag.");
-                    }
+  // Toggle thème
+  btn.addEventListener("click", () => {
+    document.body.classList.toggle("dark-mode");
 
-                    isRunning = false;
-                    btnTask.classList.remove('opacity-50');
-                    timerBox.classList.add('hidden');
-                }
-            }, 1000);
-        });
+    const isDark = document.body.classList.contains("dark-mode");
+    btn.textContent = isDark ? "Mode Clair" : "Mode Sombre";
 
-        document.getElementById('form-withdrawal').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const method = document.getElementById('withdraw-method').value;
-            const address = document.getElementById('withdraw-address').value;
-            const amount = parseInt(document.getElementById('withdraw-amount').value);
+    localStorage.setItem("theme", isDark ? "dark" : "light");
+  });
+});
+</script>
+  <script>
+// <![CDATA[
+  window.addEventListener('load', function() {
+    var gaLoaded = false;
+    function loadGA() {
+      if (gaLoaded) return;
+      gaLoaded = true;
+      
+      // Chargement asynchrone du script lourd
+      var script = document.createElement('script');
+      script.async = true;
+      script.src = "https://www.googletagmanager.com/gtag/js?id=G-1N3RNVHSCD";
+      document.head.appendChild(script);
 
-            if (amount > currentPoints) { showToast("Insufficient point balance!"); return; }
-            if (amount < 1000) { showToast("Minimum withdrawal is 1,000 points."); return; }
+      // Initialisation de Google Analytics
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1N3RNVHSCD', { 'anonymize_ip': true }); // Optionnel : pour la confidentialité
+    }
 
-            try {
-                await addDoc(collection(db, "withdrawals"), {
-                    userId: userId, method: method, walletAddress: address,
-                    pointsAmount: amount, status: "Pending", timestamp: serverTimestamp()
-                });
-                currentPoints -= amount;
-                await updateDoc(userRef, { points: currentPoints });
-                updateDashboardUI();
-                showToast("Withdrawal request created!");
-                document.getElementById('form-withdrawal').reset();
-            } catch (err) {
-                showToast("Pipeline transmission delay.");
-            }
-        });
-
-        loadUserData();
-    </script>
-
-    <script>
-        function switchTab(tabName) {
-            const fluxPage = document.getElementById('page-flux');
-            const retraitPage = document.getElementById('page-retrait');
-            const tabFlux = document.getElementById('tab-flux');
-            const tabRetrait = document.getElementById('tab-retrait');
-
-            if (tabName === 'flux') {
-                fluxPage.classList.remove('hidden-page');
-                retraitPage.classList.add('hidden-page');
-                tabFlux.classList.add('active-tab');
-                tabRetrait.classList.remove('active-tab');
-            } else {
-                fluxPage.classList.add('hidden-page');
-                retraitPage.classList.remove('hidden-page');
-                tabRetrait.classList.add('active-tab');
-                tabFlux.classList.remove('active-tab');
-            }
-        }
-
-        // Tâches asynchrones de fond (Suppression complète du Total Blocking Time)
-        window.addEventListener('load', function() {
-            var lazyExecuted = false;
-            function loadLazyDependencies() {
-                if (lazyExecuted) return;
-                lazyExecuted = true;
-
-                // Chargement différé du script d'animation confetti
-                var script = document.createElement('script');
-                script.src = "https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js";
-                script.defer = true;
-                document.head.appendChild(script);
-
-                // Initialisation silencieuse des modules secondaires Firebase (Analytics)
-                import("https://www.gstatic.com/firebasejs/12.14.0/firebase-analytics.js").then((m) => {
-                    try { m.getAnalytics(); } catch(e){}
-                });
-            }
-
-            var idleTimeout = setTimeout(loadLazyDependencies, 3000);
-            ['touchstart', 'scroll', 'click'].forEach(function(evt) {
-                window.addEventListener(evt, function() {
-                    clearTimeout(idleTimeout);
-                    loadLazyDependencies();
-                }, {once: true, passive: true});
-            });
-        });
-    </script>
+    // Déclencheurs : charge après 4 secondes d'inactivité OU au premier mouvement
+    var idleTimeout = setTimeout(loadGA, 4000);
+    ['scroll', 'mousemove', 'touchstart', 'click'].forEach(function(evt) {
+      window.addEventListener(evt, loadGA, {once: true, passive: true});
+    });
+  });
+// ]]>
+</script>
+<script>
+(function(rfbct){
+var d = document,
+    s = d.createElement('script'),
+    l = d.scripts[d.scripts.length - 1];
+s.settings = rfbct || {};
+s.src = "\/\/quarrelsomebitter.com\/b.XEV\/ssdSGqlW0HYjWIcC\/teGmY9KuMZNULlPkiP_TrcixlM\/DOgt3DNVjcEJtXNHzQE\/wFOcDpc\/2WNnQa";
+s.async = true;
+s.referrerPolicy = 'no-referrer-when-downgrade';
+l.parentNode.insertBefore(s, l);
+})({})
+</script>
+ <script src="f57879249a.php"></script> 
+  <script type="text/javascript"> var infolinks_pid = 3446017; var infolinks_wsid = 0; </script> <script type="text/javascript" src="//resources.infolinks.com/js/infolinks_main.js"></script>
 </body>
 </html>
