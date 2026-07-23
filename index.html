@@ -1,34 +1,15 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  // <![CDATA[
-  window.addEventListener('load', function() {
-    var gaLoaded = false;
-    function loadGA() {
-      if (gaLoaded) return;
-      gaLoaded = true;
-      
-      // Chargement asynchrone du script lourd
-      var script = document.createElement('script');
-      script.async = true;
-      script.src = "https://www.googletagmanager.com/gtag/js?id=G-1N3RNVHSCD";
-      document.head.appendChild(script);
+ <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-1N3RNVHSCD"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
 
-      // Initialisation de Google Analytics
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
-      gtag('config', 'G-1N3RNVHSCD', { 'anonymize_ip': true }); // Optionnel : pour la confidentialité
-    }
-
-    // Déclencheurs : charge après 4 secondes d'inactivité OU au premier mouvement
-    var idleTimeout = setTimeout(loadGA, 4000);
-    ['scroll', 'mousemove', 'touchstart', 'click'].forEach(function(evt) {
-      window.addEventListener(evt, loadGA, {once: true, passive: true});
-    });
-  });
-// ]]>
-</script>
+  gtag('config', 'G-1N3RNVHSCD');
+</script> 
 <meta charset="UTF-8">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
